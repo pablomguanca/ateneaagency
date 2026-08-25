@@ -1,0 +1,101 @@
+@use 'variables' as v;
+
+@mixin sm {
+  @media (min-width: #{v.$bp-sm}) { @content; }
+}
+@mixin md {
+  @media (min-width: #{v.$bp-md}) { @content; }
+}
+@mixin lg {
+  @media (min-width: #{v.$bp-lg}) { @content; }
+}
+@mixin xl {
+  @media (min-width: #{v.$bp-xl}) { @content; }
+}
+@mixin below-md {
+  @media (max-width: #{v.$bp-md - 1px}) { @content; }
+}
+@mixin below-sm {
+  @media (max-width: #{v.$bp-sm - 1px}) { @content; }
+}
+
+@mixin eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.68rem;
+  font-weight: v.$fw-medium;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: v.$color-gold;
+}
+
+@mixin gold-rule {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(v.$color-gold, 0.4),
+    transparent
+  );
+}
+
+@mixin gold-border-top {
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, v.$color-gold, transparent);
+  }
+}
+
+@mixin gold-border-bottom {
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, v.$color-gold, transparent);
+  }
+}
+
+@mixin hover-underline($color: v.$color-gold) {
+  position: relative;
+  padding-bottom: 2px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: $color;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform v.$t-base;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin label-text {
+  font-size: 0.7rem;
+  font-weight: v.$fw-medium;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}

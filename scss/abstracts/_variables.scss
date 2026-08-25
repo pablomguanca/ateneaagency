@@ -1,0 +1,51 @@
+$color-dark:         #06060A;
+$color-dark-2:       #0E0E18;
+$color-dark-surface: #1A1A2E;
+$color-gold:         #C9A84C;
+$color-gold-bright:  #E8C97A;
+$color-gold-pale:    #F5EDD6;
+$color-ivory:        #F0EBE0;
+$color-ivory-dim:    #9E9688;
+$color-whatsapp:     #25D366;
+$color-error:        #C85A5A;
+
+$font-serif: 'Cormorant Garamond', Georgia, serif;
+$font-sans:  'DM Sans', system-ui, sans-serif;
+
+$fw-light:    300;
+$fw-regular:  400;
+$fw-medium:   500;
+$fw-semibold: 600;
+$fw-bold:     700;
+
+$space-xs:  0.5rem;
+$space-sm:  1rem;
+$space-md:  1.5rem;
+$space-lg:  2rem;
+$space-xl:  2.5rem;
+$space-2xl: 3rem;
+$space-3xl: 4rem;
+$space-4xl: 5rem;
+$space-5xl: 7rem;
+$space-6xl: 9rem;
+
+$max-width: 1200px;
+$side-pad:  5vw;
+
+$bp-sm: 600px;
+$bp-md: 900px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
+$t-fast:   0.2s ease;
+$t-base:   0.3s ease;
+$t-slow:   0.4s cubic-bezier(.23, 1, .32, 1);
+$t-slower: 0.8s cubic-bezier(.23, 1, .32, 1);
+
+$z-bg:      0;
+$z-content: 1;
+$z-overlay: 50;
+$z-mob:     999;
+$z-nav:     1000;
+$z-wa:      2000;
+$z-grain:   9999;
