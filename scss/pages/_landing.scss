@@ -1,0 +1,240 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.lp-bar {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-lg v.$side-pad;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$space-md;
+  flex-wrap: wrap;
+
+  &__logo {
+    font-family: v.$font-serif;
+    font-size: 1.4rem;
+    font-weight: v.$fw-bold;
+    letter-spacing: 0.03em;
+    color: v.$color-ivory;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    em {
+      color: v.$color-gold;
+      font-style: normal;
+    }
+  }
+
+  &__tag {
+    @include m.label-text;
+    color: v.$color-gold;
+    border: 1px solid rgba(v.$color-gold, 0.3);
+    border-radius: 2rem;
+    padding: 0.4rem 1rem;
+  }
+}
+
+.lp-hero {
+  position: relative;
+  z-index: v.$z-content;
+  max-width: v.$max-width;
+  margin: 0 auto;
+  padding: v.$space-3xl v.$side-pad v.$space-5xl;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: v.$space-3xl;
+  align-items: center;
+
+  @include m.below-md {
+    grid-template-columns: 1fr;
+    padding: v.$space-xl v.$side-pad v.$space-4xl;
+    gap: v.$space-2xl;
+  }
+
+  &__kicker {
+    @include m.eyebrow;
+    margin-bottom: v.$space-lg;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: v.$space-lg;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__lead {
+    font-size: 1rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    max-width: 48ch;
+    margin-bottom: v.$space-xl;
+  }
+
+  &__points {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.88rem;
+      font-weight: v.$fw-light;
+      color: v.$color-ivory;
+    }
+
+    svg {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      color: v.$color-gold;
+    }
+  }
+}
+
+.lp-form {
+  &__title {
+    font-family: v.$font-serif;
+    font-size: 1.5rem;
+    font-weight: v.$fw-bold;
+    line-height: 1.2;
+  }
+
+  &__note {
+    font-size: 0.75rem;
+    color: v.$color-ivory-dim;
+    line-height: 1.6;
+  }
+}
+
+.lp-check {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-5xl v.$side-pad;
+  background: v.$color-dark-2;
+
+  @include m.below-md {
+    padding: v.$space-4xl v.$side-pad;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: v.$space-4xl;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.05;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__grid {
+    max-width: v.$max-width;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: v.$space-lg;
+
+    @include m.below-md {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__item {
+    display: flex;
+    gap: v.$space-md;
+    padding: v.$space-lg;
+    border: 1px solid rgba(v.$color-gold, 0.12);
+    border-radius: 1rem;
+    transition: border-color v.$t-base;
+
+    &:hover {
+      border-color: rgba(v.$color-gold, 0.32);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+  }
+
+  &__item-title {
+    font-size: 1.1rem;
+    margin-bottom: v.$space-xs;
+  }
+
+  &__item-desc {
+    font-size: 0.85rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.75;
+  }
+}
+
+.lp-close {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-5xl v.$side-pad;
+  text-align: center;
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.05;
+    margin-bottom: v.$space-md;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__lead {
+    font-size: 0.95rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    max-width: 52ch;
+    margin: 0 auto v.$space-2xl;
+  }
+}
+
+.lp-footer {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-lg v.$side-pad v.$space-2xl;
+  text-align: center;
+  border-top: 1px solid rgba(v.$color-gold, 0.1);
+
+  &__copy {
+    font-size: 0.7rem;
+    color: v.$color-ivory-dim;
+    letter-spacing: 0.06em;
+  }
+}

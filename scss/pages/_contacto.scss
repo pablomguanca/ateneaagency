@@ -1,0 +1,89 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.contact {
+  position: relative;
+  z-index: v.$z-content;
+  max-width: v.$max-width;
+  margin: 0 auto;
+  padding: 0 v.$side-pad v.$space-6xl;
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: v.$space-3xl;
+
+  @include m.below-md {
+    grid-template-columns: 1fr;
+    padding: 0 v.$side-pad v.$space-4xl;
+    gap: v.$space-2xl;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    margin-bottom: v.$space-md;
+  }
+
+  &__heading {
+    font-family: v.$font-serif;
+    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.1;
+    margin-bottom: v.$space-lg;
+  }
+
+  &__body {
+    font-size: 0.9rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    margin-bottom: v.$space-xl;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-md;
+    margin-bottom: v.$space-xl;
+    padding-bottom: v.$space-xl;
+    border-bottom: 1px solid rgba(v.$color-gold, 0.12);
+  }
+
+  &__list-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.92rem;
+
+    a {
+      transition: color v.$t-fast;
+
+      &:hover {
+        color: v.$color-gold;
+      }
+    }
+  }
+
+  &__list-label {
+    @include m.label-text;
+    color: v.$color-gold;
+  }
+
+  &__media {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(v.$color-gold, 0.12);
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-lg;
+  }
+}
+
