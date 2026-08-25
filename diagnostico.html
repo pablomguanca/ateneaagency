@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, follow">
+  <meta name="description"
+    content="Diagnóstico sin cargo de la presencia digital de tu desarrollo o inmobiliaria: qué está funcionando, qué no y por dónde empezar.">
+  <title>Diagnóstico sin cargo — Atenea Agency</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursorRing"></div>
+
+  <div class="parallax-scene" aria-hidden="true">
+    <div class="layer" id="layer1">
+      <div class="orb-1"></div>
+      <div class="orb-3"></div>
+    </div>
+    <div class="layer" id="layer2">
+      <div class="orb-2"></div>
+      <div class="grid-bg"></div>
+    </div>
+  </div>
+
+  <header class="lp-bar">
+    <div class="lp-bar__logo"><img class="logo-icon" src="assets/img/logo/logo_mark.png" alt="" width="512"
+        height="512">Atenea<em>Agency</em></div>
+    <span class="lp-bar__tag">Marketing digital para real estate</span>
+  </header>
+
+  <section class="lp-hero" aria-labelledby="lp-title">
+    <div class="lp-hero__text">
+      <p class="lp-hero__kicker">
+        <span class="hero__kicker-line"></span>
+        Diagnóstico sin cargo
+      </p>
+
+      <h1 class="lp-hero__title" id="lp-title">¿Tu desarrollo vende<br>todo lo que <em>podría</em>?</h1>
+
+      <p class="lp-hero__lead">
+        Revisamos la presencia digital de tu proyecto y te devolvemos un diagnóstico concreto: qué está
+        funcionando, qué está dejando plata sobre la mesa y por dónde conviene empezar.
+      </p>
+
+      <ul class="lp-hero__points">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+          Sin costo y sin compromiso
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+          Te respondemos dentro de las 24 horas hábiles
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+          Especializados en desarrollos e inmobiliarias
+        </li>
+      </ul>
+    </div>
+
+    <form class="lp-form form-panel js-contact-form" id="form" novalidate>
+      <h2 class="lp-form__title">Pedí tu diagnóstico</h2>
+
+      <div class="form__group">
+        <label class="form__label" for="lpNombre">Nombre y apellido</label>
+        <input class="form__input" type="text" id="lpNombre" name="nombre" autocomplete="name" required>
+      </div>
+
+      <div class="form__group">
+        <label class="form__label" for="lpContacto">Email o teléfono</label>
+        <input class="form__input" type="text" id="lpContacto" name="contacto" autocomplete="email" required>
+      </div>
+
+      <div class="form__group">
+        <label class="form__label" for="lpProyecto">Tipo de proyecto</label>
+        <select class="form__input form__select" id="lpProyecto" name="proyecto" required>
+          <option value="" disabled selected>Elegí una opción</option>
+          <option value="desarrollo-pozo">Desarrollo en pozo</option>
+          <option value="inmobiliaria">Inmobiliaria</option>
+          <option value="propiedad">Propiedad individual</option>
+          <option value="otro-rubro">Otro rubro</option>
+        </select>
+      </div>
+
+      <div class="form__group">
+        <label class="form__label" for="lpMensaje">Contanos sobre tu proyecto
+          <span class="form__optional">(opcional)</span></label>
+        <textarea class="form__input form__textarea" id="lpMensaje" name="mensaje" rows="3"></textarea>
+      </div>
+
+      <button class="btn-primary form__submit" type="submit">
+        <span>Quiero mi diagnóstico</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      <p class="form__status js-form-status" role="status" aria-live="polite"></p>
+
+      <p class="lp-form__note">Usamos tus datos solo para responderte. No los compartimos con nadie.</p>
+    </form>
+  </section>
+
+  <section class="lp-check reveal" aria-labelledby="incluye-title">
+    <div class="lp-check__header">
+      <p class="lp-check__label">Qué incluye</p>
+      <h2 class="lp-check__title" id="incluye-title">Qué miramos,<br><em>concretamente</em></h2>
+    </div>
+
+    <div class="lp-check__grid">
+      <article class="lp-check__item">
+        <div class="lp-check__icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="17" stroke="rgba(201,168,76,0.28)" stroke-width="1.2" />
+            <circle cx="20" cy="9" r="4" stroke="#C9A84C" stroke-width="1.2" fill="rgba(201,168,76,0.1)" />
+            <circle cx="30" cy="26" r="4" stroke="#C9A84C" stroke-width="1.2" fill="rgba(201,168,76,0.1)" />
+            <circle cx="10" cy="26" r="4" stroke="#C9A84C" stroke-width="1.2" fill="rgba(201,168,76,0.1)" />
+            <path d="M20 13v9m0 0-7 3m7-3 7 3" stroke="rgba(201,168,76,0.4)" stroke-width="1" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="lp-check__item-title">Tus redes sociales</h3>
+          <p class="lp-check__item-desc">Frecuencia, tipo de contenido y qué se lleva alguien que entra hoy a tu
+            perfil buscando el proyecto.</p>
+        </div>
+      </article>
+
+      <article class="lp-check__item">
+        <div class="lp-check__icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="24" width="6" height="12" fill="rgba(201,168,76,0.18)" stroke="rgba(201,168,76,0.4)"
+              stroke-width="1" />
+            <rect x="14" y="18" width="6" height="18" fill="rgba(201,168,76,0.26)" stroke="rgba(201,168,76,0.5)"
+              stroke-width="1" />
+            <rect x="23" y="11" width="6" height="25" fill="rgba(201,168,76,0.34)" stroke="#C9A84C"
+              stroke-width="1" />
+            <rect x="32" y="5" width="5" height="31" fill="rgba(201,168,76,0.45)" stroke="#C9A84C"
+              stroke-width="1.2" />
+            <path d="M4 20 13 14 22 8 34 3" stroke="rgba(201,168,76,0.45)" stroke-width="1.2"
+              stroke-dasharray="3 3" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="lp-check__item-title">Tus campañas activas</h3>
+          <p class="lp-check__item-desc">Si hay pauta corriendo: segmentación, creatividades y a qué costo estás
+            trayendo cada consulta.</p>
+        </div>
+      </article>
+
+      <article class="lp-check__item">
+        <div class="lp-check__icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="6" width="34" height="28" rx="3" stroke="rgba(201,168,76,0.4)" stroke-width="1.2"
+              fill="rgba(201,168,76,0.04)" />
+            <line x1="3" y1="13" x2="37" y2="13" stroke="rgba(201,168,76,0.28)" stroke-width="1" />
+            <circle cx="8" cy="9.5" r="1.5" fill="rgba(201,168,76,0.6)" />
+            <rect x="8" y="18" width="18" height="3" rx="1" fill="rgba(201,168,76,0.22)" />
+            <rect x="8" y="24" width="12" height="5" rx="1" fill="rgba(201,168,76,0.4)" stroke="#C9A84C"
+              stroke-width="1" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="lp-check__item-title">Tu web o landing</h3>
+          <p class="lp-check__item-desc">Velocidad, claridad del mensaje y si el formulario convierte o pierde
+            gente en el camino.</p>
+        </div>
+      </article>
+
+      <article class="lp-check__item">
+        <div class="lp-check__icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="17" cy="17" r="12" stroke="#C9A84C" stroke-width="1.4" fill="rgba(201,168,76,0.06)" />
+            <path d="m26 26 9 9" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="round" />
+            <path d="M12 20V15l5-4 5 4v5" stroke="rgba(201,168,76,0.6)" stroke-width="1.2"
+              stroke-linejoin="round" />
+            <rect x="15" y="16" width="4" height="4" fill="rgba(201,168,76,0.35)" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="lp-check__item-title">Tu presencia en portales</h3>
+          <p class="lp-check__item-desc">Cómo aparece el proyecto frente a los que compiten por el mismo
+            comprador.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="split reveal" aria-labelledby="lp-mercado-title">
+    <div class="split__media">
+      <img class="split__img" src="assets/img/google_atenea.webp"
+        alt="Búsqueda online de propiedades, el punto de partida de la mayoría de los compradores" loading="lazy"
+        decoding="async" width="800" height="600">
+    </div>
+    <div class="split__text">
+      <p class="split__label">Por qué te lo proponemos</p>
+      <h2 class="split__title" id="lp-mercado-title">La mayoría de los proyectos<br>llega <em>a medias</em></h2>
+      <p class="split__body">
+        El comprador arranca la búsqueda en el celular, mucho antes de pisar la obra. Pero la mayoría de los
+        desarrollos sale a la venta con un Instagram con poco movimiento y una ficha en un portal.
+      </p>
+      <p class="split__body">
+        Esa distancia entre cómo busca el comprador y cómo se muestra el proyecto es la que medimos en el
+        diagnóstico. Casi siempre hay algo concreto para corregir enseguida.
+      </p>
+    </div>
+  </section>
+
+  <section class="process reveal" aria-labelledby="lp-proceso-title">
+    <div class="process__header">
+      <p class="process__label">Y después del diagnóstico</p>
+      <h2 class="process__title" id="lp-proceso-title">Un método,<br>no <em>improvisación</em></h2>
+      <p class="process__intro">
+        Si deciden avanzar con nosotros, así seguimos. Y si no, el diagnóstico igual queda para ustedes.
+      </p>
+    </div>
+    <div class="process__grid">
+      <div class="process__item">
+        <span class="process__num">01</span>
+        <h3 class="process__item-title">Analizamos el proyecto</h3>
+        <p class="process__item-desc">Tipo de propiedad, ubicación, público objetivo y qué hace distinto a tu
+          desarrollo del que está a tres cuadras.</p>
+      </div>
+      <div class="process__item">
+        <span class="process__num">02</span>
+        <h3 class="process__item-title">Auditamos lo que hay</h3>
+        <p class="process__item-desc">Redes, portales, campañas activas y sitio web, si es que existe. Sabemos
+          desde dónde partimos antes de proponer nada.</p>
+      </div>
+      <div class="process__item">
+        <span class="process__num">03</span>
+        <h3 class="process__item-title">Diseñamos la estrategia</h3>
+        <p class="process__item-desc">Cómo llegar al cliente ideal, cómo hablarle y qué canales cubrir en cada
+          etapa: del primer contacto al brochure y los tours 360°.</p>
+      </div>
+      <div class="process__item">
+        <span class="process__num">04</span>
+        <h3 class="process__item-title">Acompañamos el proceso</h3>
+        <p class="process__item-desc">Ejecutamos, medimos y ajustamos. Nos quedamos en el proyecto de punta a
+          punta, no dejamos algo funcionando y nos vamos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lp-close reveal" aria-labelledby="lp-cierre-title">
+    <h2 class="lp-close__title" id="lp-cierre-title">Empecemos por<br>el <em>diagnóstico</em></h2>
+    <p class="lp-close__lead">
+      Es gratis, no te compromete a nada y en 24 horas hábiles tenés una lectura clara de dónde está parado tu
+      proyecto.
+    </p>
+    <a href="#form" class="btn-primary">
+      <span>Pedir mi diagnóstico</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
+    </a>
+  </section>
+
+  <footer class="lp-footer">
+    <p class="lp-footer__copy">© 2025 Atenea Agency · Todos los derechos reservados</p>
+  </footer>
+
+  <!-- TODO: reemplazar 5491100000000 por el número real de WhatsApp -->
+  <a href="https://wa.me/5491100000000" class="wa" target="_blank" rel="noopener noreferrer"
+    aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  </a>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>
