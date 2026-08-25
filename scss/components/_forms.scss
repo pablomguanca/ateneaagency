@@ -1,0 +1,106 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.form {
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: v.$space-lg;
+
+    @include m.below-sm {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  &__label {
+    @include m.label-text;
+    color: v.$color-ivory-dim;
+  }
+
+  &__optional {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: v.$fw-regular;
+    color: rgba(v.$color-ivory-dim, 0.7);
+  }
+
+  &__input {
+    font-family: v.$font-sans;
+    font-size: 0.92rem;
+    color: v.$color-ivory;
+    background: v.$color-dark-2;
+    border: 1px solid rgba(v.$color-gold, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.9rem 1.1rem;
+    transition: border-color v.$t-fast;
+
+    &::placeholder {
+      color: rgba(v.$color-ivory-dim, 0.6);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-gold;
+    }
+  }
+
+  &__select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(v.$color-gold, 0.6) 50%),
+      linear-gradient(135deg, rgba(v.$color-gold, 0.6) 50%, transparent 50%);
+    background-position: calc(100% - 22px) center, calc(100% - 16px) center;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  &__submit {
+    align-self: flex-start;
+  }
+
+  &__status {
+    font-size: 0.85rem;
+    color: v.$color-gold;
+    min-height: 1.2em;
+  }
+}
+
+.was-validated .form__input:invalid {
+  border-color: rgba(v.$color-error, 0.6);
+}
+
+.form-panel {
+  position: relative;
+  background: v.$color-dark-2;
+  border: 1px solid rgba(v.$color-gold, 0.2);
+  border-radius: 1.25rem;
+  padding: v.$space-xl;
+  display: flex;
+  flex-direction: column;
+  gap: v.$space-md;
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
+
+  @include m.below-sm {
+    padding: v.$space-lg;
+  }
+
+  .form__input {
+    background: v.$color-dark;
+  }
+
+  .form__submit {
+    align-self: stretch;
+    justify-content: center;
+    text-align: center;
+  }
+}

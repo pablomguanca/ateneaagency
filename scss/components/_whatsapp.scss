@@ -1,0 +1,29 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.wa {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: v.$color-whatsapp;
+  @include m.flex-center;
+  box-shadow: 0 4px 24px rgba(v.$color-whatsapp, 0.25);
+  z-index: v.$z-wa;
+  transition:
+    transform v.$t-base,
+    box-shadow v.$t-base;
+
+  svg {
+    width: 26px;
+    height: 26px;
+    fill: white;
+  }
+
+  &:hover {
+    transform: scale(1.12);
+    box-shadow: 0 8px 32px rgba(v.$color-whatsapp, 0.4);
+  }
+}

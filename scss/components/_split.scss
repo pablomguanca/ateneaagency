@@ -1,0 +1,105 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.split {
+  position: relative;
+  z-index: v.$z-content;
+  max-width: v.$max-width;
+  margin: 0 auto;
+  padding: v.$space-4xl v.$side-pad;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: v.$space-3xl;
+  align-items: center;
+
+  @include m.below-md {
+    grid-template-columns: 1fr;
+    padding: v.$space-3xl v.$side-pad;
+  }
+
+  &--reverse &__media {
+    order: 2;
+
+    @include m.below-md {
+      order: -1;
+    }
+  }
+
+  &__media {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(v.$color-gold, 0.12);
+
+    @include m.below-md {
+      order: -1;
+    }
+
+    &--portrait {
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    margin-bottom: v.$space-md;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.1;
+    margin-bottom: v.$space-lg;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__body {
+    font-size: 0.92rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    margin-bottom: v.$space-md;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: v.$space-sm;
+    margin-top: v.$space-lg;
+
+    li {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      font-size: 0.88rem;
+      font-weight: v.$fw-light;
+      color: v.$color-ivory-dim;
+      line-height: 1.7;
+
+      &::before {
+        content: '';
+        flex-shrink: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: v.$color-gold;
+        transform: translateY(-2px);
+      }
+    }
+  }
+}

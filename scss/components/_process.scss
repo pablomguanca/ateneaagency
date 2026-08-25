@@ -1,0 +1,85 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.process {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-5xl v.$side-pad;
+
+  @include m.below-md {
+    padding: v.$space-4xl v.$side-pad;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: v.$space-4xl;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: v.$fw-bold;
+    color: v.$color-ivory;
+    line-height: 1.05;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__intro {
+    font-size: 0.95rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    max-width: 60ch;
+    margin: v.$space-lg auto 0;
+  }
+
+  &__grid {
+    max-width: v.$max-width;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: v.$space-2xl;
+
+    @include m.below-md {
+      grid-template-columns: 1fr;
+      gap: v.$space-3xl;
+    }
+  }
+
+  &__item {
+    position: relative;
+    padding-top: v.$space-lg;
+    border-top: 1px solid rgba(v.$color-gold, 0.15);
+  }
+
+  &__num {
+    display: block;
+    font-family: v.$font-serif;
+    font-size: 2.4rem;
+    font-weight: v.$fw-bold;
+    color: rgba(v.$color-gold, 0.35);
+    margin-bottom: v.$space-sm;
+  }
+
+  &__item-title {
+    font-size: 1.2rem;
+    margin-bottom: v.$space-xs;
+  }
+
+  &__item-desc {
+    font-size: 0.85rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.75;
+  }
+}

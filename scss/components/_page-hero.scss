@@ -1,0 +1,58 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.page-hero {
+  position: relative;
+  z-index: v.$z-content;
+  padding: 11rem v.$side-pad v.$space-5xl;
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @include m.below-md {
+    padding: 8rem v.$side-pad v.$space-4xl;
+  }
+
+  &__eyebrow {
+    @include m.eyebrow;
+    justify-content: center;
+    margin-bottom: v.$space-lg;
+    opacity: 0;
+    animation: slideRight 0.8s 0.1s cubic-bezier(.23, 1, .32, 1) forwards;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: v.$space-lg;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__lead {
+    font-size: 1rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    max-width: 56ch;
+    margin: 0 auto;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: v.$space-lg;
+    margin-top: v.$space-2xl;
+
+    @include m.below-sm {
+      flex-direction: column;
+    }
+  }
+}

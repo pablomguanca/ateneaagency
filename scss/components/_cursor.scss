@@ -1,0 +1,14 @@
+@use '../abstracts/variables' as v;
+
+#cursor,
+#cursorRing {
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: v.$z-grain;
+    transform: translate(-50%, -50%);
+    will-change: left, top;
+    transition: opacity v.$t-fast;
+}

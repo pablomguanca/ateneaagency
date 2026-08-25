@@ -1,0 +1,248 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.logo-icon {
+  height: 1.4em;
+  width: auto;
+}
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: v.$z-nav;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem v.$side-pad;
+  transition:
+    padding v.$t-slow,
+    background v.$t-slow,
+    border-color v.$t-slow;
+
+  &.stuck {
+    padding: 1.1rem v.$side-pad;
+    background: rgba(v.$color-dark, 0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(v.$color-gold, 0.1);
+  }
+
+  @include m.below-md {
+    padding: 1.4rem v.$side-pad;
+
+    &.stuck {
+      padding: 1rem v.$side-pad;
+    }
+  }
+
+  &__logo {
+    font-family: v.$font-serif;
+    font-size: 1.5rem;
+    font-weight: v.$fw-bold;
+    letter-spacing: 0.03em;
+    color: v.$color-ivory;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    em {
+      color: v.$color-gold;
+      font-style: normal;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, v.$color-gold, transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform v.$t-slow;
+    }
+
+    &:hover::after {
+      transform: scaleX(1);
+    }
+  }
+
+  &__links {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+
+    @include m.below-md {
+      display: none;
+    }
+
+    a {
+      @include m.label-text;
+      color: v.$color-ivory-dim;
+      transition: color v.$t-fast;
+
+      &:hover {
+        color: v.$color-ivory;
+      }
+    }
+  }
+
+  &__btn {
+    @include m.label-text;
+    color: v.$color-dark;
+    background: v.$color-gold;
+    padding: 0.6rem 1.6rem;
+    transition:
+      background v.$t-base,
+      letter-spacing v.$t-base;
+
+    @include m.below-md {
+      display: none;
+    }
+
+    &:hover {
+      background: v.$color-gold-bright;
+      letter-spacing: 0.22em;
+    }
+  }
+
+  &__ham {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0.3rem;
+
+    @include m.below-md {
+      display: flex;
+    }
+
+    span {
+      display: block;
+      height: 1px;
+      background: v.$color-ivory;
+      transition: all v.$t-base;
+
+      &:nth-child(1) { width: 24px; }
+      &:nth-child(2) { width: 16px; }
+      &:nth-child(3) { width: 20px; }
+    }
+
+    &:hover span {
+      width: 24px !important;
+      background: v.$color-gold;
+    }
+
+    &.open {
+      span:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 24px; }
+      span:nth-child(2) { opacity: 0; }
+      span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 24px; }
+    }
+  }
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(v.$color-dark, 0.97);
+  backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0 v.$side-pad;
+  z-index: v.$z-mob;
+  counter-reset: menu;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 90% 55% at 15% 12%, rgba(v.$color-gold, 0.12), transparent 65%),
+      radial-gradient(ellipse 70% 50% at 100% 100%, rgba(26, 10, 60, 0.55), transparent 70%);
+    pointer-events: none;
+  }
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.4s ease;
+  }
+
+  a {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 1.1rem;
+    padding: v.$space-md 0;
+    border-bottom: 1px solid rgba(v.$color-gold, 0.12);
+    counter-increment: menu;
+    font-family: v.$font-serif;
+    font-size: clamp(2.4rem, 13vw, 3.4rem);
+    font-weight: v.$fw-bold;
+    color: v.$color-ivory;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      color v.$t-fast,
+      padding-left v.$t-slow,
+      border-color v.$t-base,
+      opacity 0.4s ease,
+      transform 0.4s cubic-bezier(.23, 1, .32, 1);
+
+    &::before {
+      content: counter(menu, decimal-leading-zero);
+      font-family: v.$font-sans;
+      font-size: 0.7rem;
+      font-weight: v.$fw-medium;
+      letter-spacing: 0.18em;
+      color: v.$color-gold;
+      opacity: 0.65;
+    }
+
+    &:first-child {
+      border-top: 1px solid rgba(v.$color-gold, 0.12);
+    }
+
+    &[aria-current='page'] {
+      color: v.$color-gold;
+
+      &::before {
+        opacity: 1;
+      }
+    }
+
+    &:hover,
+    &:focus-visible,
+    &:active {
+      color: v.$color-gold;
+      padding-left: 0.6rem;
+      border-color: rgba(v.$color-gold, 0.4);
+    }
+
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        transition-delay: 0.05s + ($i * 0.06s);
+      }
+    }
+  }
+
+  &.open a {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &:not(.open) a {
+    transition-delay: 0s;
+  }
+}
