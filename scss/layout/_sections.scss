@@ -1,0 +1,223 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.divider {
+  @include m.gold-rule;
+}
+
+.manifesto {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-6xl v.$side-pad;
+  overflow: hidden;
+
+  @include m.below-md {
+    padding: v.$space-5xl v.$side-pad;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 60% 60% at 50% 50%,
+      rgba(v.$color-gold, 0.04) 0%,
+      transparent 100%
+    );
+  }
+
+  &__content {
+    position: relative;
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__quote {
+    font-family: v.$font-serif;
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    font-weight: v.$fw-light;
+    font-style: italic;
+    line-height: 1.2;
+    color: v.$color-ivory;
+    margin-bottom: v.$space-2xl;
+    letter-spacing: 0.01em;
+
+    strong {
+      font-weight: v.$fw-bold;
+      font-style: normal;
+      color: v.$color-gold;
+    }
+  }
+
+  &__sub {
+    font-size: 0.9rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    max-width: 46ch;
+    margin: 0 auto v.$space-2xl;
+    line-height: 1.8;
+  }
+}
+
+.finale {
+  position: relative;
+  z-index: v.$z-content;
+  background: v.$color-gold;
+  padding: 5rem 8vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$space-2xl;
+  flex-wrap: wrap;
+  overflow: hidden;
+
+  &::before {
+    content: 'ATENEA';
+    position: absolute;
+    right: -2vw;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: v.$font-serif;
+    font-size: 18vw;
+    font-weight: v.$fw-bold;
+    color: rgba(0, 0, 0, 0.07);
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  @include m.below-sm {
+    flex-direction: column;
+    padding: v.$space-4xl v.$side-pad;
+  }
+
+  &__left {
+    position: relative;
+  }
+
+  &__eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: v.$fw-medium;
+    color: rgba(v.$color-dark, 0.6);
+    margin-bottom: v.$space-sm;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: v.$fw-bold;
+    color: v.$color-dark;
+    line-height: 1;
+  }
+
+  &__right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: v.$space-md;
+    flex-wrap: wrap;
+
+    @include m.below-sm {
+      flex-direction: column;
+      width: 100%;
+
+      .btn-dark,
+      .btn-dark-outline {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+
+  &__lead {
+    font-size: 0.9rem;
+    font-weight: v.$fw-light;
+    color: rgba(v.$color-dark, 0.75);
+    line-height: 1.8;
+    max-width: 34ch;
+    margin-top: v.$space-md;
+  }
+
+  &__form {
+    flex: 1 1 400px;
+    max-width: 480px;
+
+    @include m.below-sm {
+      width: 100%;
+      max-width: none;
+    }
+
+    .form__textarea {
+      min-height: 130px;
+    }
+  }
+
+  &__alt {
+    font-size: 0.8rem;
+    color: v.$color-ivory-dim;
+
+    a {
+      color: v.$color-gold;
+      font-weight: v.$fw-medium;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color v.$t-fast;
+
+      &:hover {
+        color: v.$color-gold-bright;
+      }
+    }
+  }
+}
+
+.footer {
+  position: relative;
+  z-index: v.$z-content;
+  padding: 2rem v.$side-pad;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(v.$color-gold, 0.1);
+
+  @include m.below-sm {
+    flex-direction: column;
+    gap: v.$space-sm;
+    text-align: center;
+  }
+
+  &__logo {
+    font-family: v.$font-serif;
+    font-size: 1.1rem;
+    font-weight: v.$fw-bold;
+    color: v.$color-ivory;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    em {
+      color: v.$color-gold;
+      font-style: normal;
+    }
+  }
+
+  &__copy {
+    font-size: 0.7rem;
+    color: v.$color-ivory-dim;
+    letter-spacing: 0.06em;
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s cubic-bezier(.23, 1, .32, 1);
+
+  &.on {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
