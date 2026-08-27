@@ -13,6 +13,10 @@
   &__header {
     text-align: center;
     margin-bottom: v.$space-4xl;
+
+    .btn-outline {
+      margin-top: v.$space-lg;
+    }
   }
 
   &__label {

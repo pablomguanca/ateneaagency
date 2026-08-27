@@ -1,0 +1,124 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.steps-block {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-3xl v.$side-pad v.$space-4xl;
+
+  @include m.below-md {
+    padding: v.$space-2xl v.$side-pad v.$space-3xl;
+  }
+
+  &__header {
+    text-align: center;
+    max-width: 60ch;
+    margin: 0 auto v.$space-4xl;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.05;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__intro {
+    font-size: 0.95rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    margin-top: v.$space-lg;
+  }
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: v.$space-2xl;
+  max-width: v.$max-width;
+  margin: 0 auto;
+  list-style: none;
+
+  @include m.below-md {
+    grid-template-columns: 1fr;
+    gap: v.$space-3xl;
+    max-width: 420px;
+  }
+
+  &__item {
+    position: relative;
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s cubic-bezier(.23, 1, .32, 1);
+
+    @for $i from 1 through 4 {
+      &:nth-child(#{$i}) {
+        transition-delay: 0.1s + ($i * 0.12s);
+      }
+    }
+  }
+
+  &__num {
+    @include m.flex-center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: v.$space-md;
+    border-radius: 50%;
+    border: 1px solid rgba(v.$color-gold, 0.35);
+    background: rgba(v.$color-gold, 0.06);
+    font-family: v.$font-sans;
+    font-size: 0.74rem;
+    font-weight: v.$fw-medium;
+    letter-spacing: 0.1em;
+    color: v.$color-gold;
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    line-height: 1.25;
+    margin-bottom: v.$space-xs;
+  }
+
+  &__desc {
+    font-size: 0.85rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.7;
+  }
+
+  &__arrow {
+    position: absolute;
+    top: 21px;
+    left: calc(100% + 0.4rem);
+    width: 34px;
+    height: 20px;
+    transform: translateY(-50%);
+    color: rgba(v.$color-gold, 0.4);
+
+    @include m.below-md {
+      top: auto;
+      left: 21px;
+      bottom: -#{v.$space-2xl};
+      transform: translate(-50%, 50%) rotate(90deg);
+    }
+  }
+}
+
+.reveal.on .steps__item {
+  opacity: 1;
+  transform: translateY(0);
+}

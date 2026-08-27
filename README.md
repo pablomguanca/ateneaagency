@@ -20,12 +20,28 @@ posicionamiento original y quedó atrás.
    fueran dos etapas que se contratan por separado.
 3. **No inventar** clientes, testimonios, casos de éxito, métricas ni datos de contacto. Si falta un dato, va un
    placeholder marcado con `TODO` (ver sección "Pendientes").
-4. El diferencial que comunica el sitio no es la lista de servicios sino el **servicio integral**: análisis del
-   proyecto → auditoría de la presencia digital → estrategia → acompañamiento de punta a punta.
+4. Lo que comunica el sitio es el **Sistema de Adquisición**: análisis del proyecto → auditoría de la presencia
+   digital → estrategia → acompañamiento de punta a punta. Las piezas sueltas se explican como partes de ese
+   sistema.
 5. **Las tarjetas de servicio de `index.html` no llevan CTA propio** (nada de "Ver servicio" / "Quiero este
    servicio"). Es a propósito: la oferta es una propuesta integral armada sobre lo que el proyecto necesita, no
    un menú de piezas sueltas para elegir de a una. El llamado a la acción vive a nivel de página (el bloque
    final "Solicitá tu diagnóstico"), no por servicio.
+
+### Voz: hablar de lo que SÍ hacemos
+
+**Nunca definir a Atenea por la negación.** Prohibido el patrón "no hacemos X, hacemos Y" y toda frase que
+termine explicando lo que Atenea no es. El lector nunca pidió saber qué es lo que Atenea no hace: quiere saber
+qué le resuelve a él. Ejemplos que se eliminaron y no deben volver: "no entregamos piezas sueltas", "no
+trabajamos con paquetes cerrados", "no un pool de proveedores sueltos", "un método, no improvisación".
+
+**Sí se conservan** las negaciones que describen el problema del lector ("tu CRM se llena de curiosos", "no hay
+forma de saber qué funciona") y las que bajan fricción en una oferta ("no te compromete a nada"). La
+diferencia: hablan de él o de su situación, no de nosotros.
+
+**Escribir siempre desde el lector, no desde la agencia.** "Nuestro diferencial es…" está escrito desde
+Atenea; "si respondés tarde, el lead ya está frío" está escrito desde quien sufre el problema. El segundo es
+el registro correcto.
 
 ### Servicios que ofrece la agencia
 Desarrollo web a medida · Landing pages de captación · Gestión de redes sociales (Instagram, Facebook, TikTok) ·
@@ -91,7 +107,8 @@ atenea-agency/
 │   │   ├── _page-hero.scss
 │   │   ├── _split.scss    ← bloque imagen + texto (reutilizado en home, servicios y nosotros)
 │   │   ├── _forms.scss    ← inputs, labels y validación (home y contacto)
-│   │   └── _process.scss  ← los 4 pasos (reutilizado en home y servicios)
+│   │   ├── _process.scss  ← los 4 pasos (reutilizado en home y servicios)
+│   │   └── _steps.scss    ← secuencia numerada con flechas (home y servicios)
 │   ├── layout/
 │   │   ├── _hero.scss
 │   │   └── _sections.scss
