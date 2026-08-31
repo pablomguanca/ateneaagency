@@ -23,3 +23,42 @@
 @keyframes drawLine {
   to { stroke-dashoffset: 0; }
 }
+
+@keyframes marqueeScroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .reveal .steps__item,
+  .reveal .process__item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .strip__item {
+    --card-scale: 1 !important;
+    --card-y: 0px !important;
+    --card-lift: 0px !important;
+    --card-reveal-y: 0px !important;
+    opacity: 1 !important;
+  }
+
+  #cursor,
+  #cursorRing,
+  .parallax-scene {
+    display: none !important;
+  }
+}

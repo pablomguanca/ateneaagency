@@ -156,7 +156,12 @@
       </div>
     </div>
 
-    <form class="contact__form js-contact-form" novalidate>
+    <form class="contact__form js-contact-form" data-origen="Contacto" novalidate>
+      <div class="form__honeypot" aria-hidden="true">
+        <label for="contactoWeb">No completar este campo</label>
+        <input type="text" id="contactoWeb" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
       <div class="form__row">
         <div class="form__group">
           <label class="form__label" for="nombre">Nombre y apellido</label>
@@ -171,7 +176,9 @@
       <div class="form__row">
         <div class="form__group">
           <label class="form__label" for="telefono">Teléfono <span class="form__optional">(opcional)</span></label>
-          <input class="form__input" type="tel" id="telefono" name="telefono" autocomplete="tel">
+          <input class="form__input" type="tel" id="telefono" name="telefono" autocomplete="tel" inputmode="tel"
+            pattern="\+?[0-9]{8,15}" maxlength="16"
+            title="Ingresá solo números, sin espacios ni guiones. Podés anteponer + si es un número del exterior.">
         </div>
         <div class="form__group">
           <label class="form__label" for="proyecto">Tipo de proyecto</label>
@@ -205,7 +212,7 @@
       </div>
 
       <button class="btn-primary form__submit" type="submit">
-        <span>Solicitar diagnóstico</span>
+        <span>Coordinar la llamada</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M5 12h14M12 5l7 7-7 7" />

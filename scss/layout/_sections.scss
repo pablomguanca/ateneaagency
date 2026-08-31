@@ -220,4 +220,10 @@
     opacity: 1;
     transform: translateY(0);
   }
+
+  // Solo mientras el reveal está pendiente: se limpia desde el JS al
+  // terminar para no dejar capas de composición colgadas.
+  &.is-pending {
+    will-change: opacity, transform;
+  }
 }

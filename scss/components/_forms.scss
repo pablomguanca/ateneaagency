@@ -23,7 +23,8 @@
     color: v.$color-ivory-dim;
   }
 
-  &__optional {
+  &__optional,
+  &__hint {
     text-transform: none;
     letter-spacing: normal;
     font-weight: v.$fw-regular;
@@ -72,6 +73,21 @@
     font-size: 0.85rem;
     color: v.$color-gold;
     min-height: 1.2em;
+
+    &.is-error {
+      color: v.$color-error;
+    }
+  }
+
+  // Trampa para bots: fuera de pantalla en vez de display:none, porque
+  // muchos scrapers ignoran los campos ocultos y este tiene que parecer
+  // completable. Queda fuera del tabulador y del lector de pantalla.
+  &__honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 }
 

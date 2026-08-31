@@ -1,0 +1,130 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.marquee-block {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-4xl 0;
+
+  @include m.below-md {
+    padding: v.$space-3xl 0;
+  }
+
+  &__header {
+    text-align: center;
+    padding: 0 v.$side-pad;
+    margin-bottom: v.$space-2xl;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    justify-content: center;
+  }
+}
+
+.marquee {
+  --marquee-duration: 38s;
+
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right,
+      transparent 0%,
+      #000 12%,
+      #000 88%,
+      transparent 100%);
+
+  &:hover .marquee__track,
+  &:focus-within .marquee__track {
+    animation-play-state: paused;
+  }
+
+  &__track {
+    display: flex;
+    width: max-content;
+    animation: marqueeScroll var(--marquee-duration) linear infinite;
+    will-change: transform;
+  }
+
+  &__group {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: v.$space-4xl;
+    padding-right: v.$space-4xl;
+    list-style: none;
+    margin: 0;
+
+    @include m.below-md {
+      gap: v.$space-2xl;
+      padding-right: v.$space-2xl;
+    }
+  }
+
+  &__item {
+    @include m.flex-center;
+    height: 68px;
+    min-width: 150px;
+    padding: 0 v.$space-md;
+    flex-shrink: 0;
+    opacity: 0.45;
+    transition:
+      opacity v.$t-slow,
+      color v.$t-slow,
+      border-color v.$t-slow;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__logo {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: grayscale(1);
+    transition: filter v.$t-slow;
+  }
+
+  &__item:hover &__logo {
+    filter: grayscale(0);
+  }
+
+  &__wordmark {
+    @include m.flex-center;
+    height: 100%;
+    width: 100%;
+    padding: 0 v.$space-md;
+    border: 1px solid rgba(v.$color-gold, 0.18);
+    border-radius: 0.75rem;
+    font-family: v.$font-serif;
+    font-size: 1.05rem;
+    font-weight: v.$fw-bold;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    color: v.$color-ivory;
+    transition:
+      border-color v.$t-slow,
+      color v.$t-slow;
+  }
+
+  &__item:hover &__wordmark {
+    border-color: rgba(v.$color-gold, 0.5);
+    color: v.$color-gold;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+
+  .marquee__track {
+    animation: none;
+  }
+
+  .marquee__group[aria-hidden='true'] {
+    display: none;
+  }
+}

@@ -80,7 +80,12 @@
       </ul>
     </div>
 
-    <form class="lp-form form-panel js-contact-form" id="form" novalidate>
+    <form class="lp-form form-panel js-contact-form" id="form" data-origen="Landing diagnóstico" novalidate>
+      <div class="form__honeypot" aria-hidden="true">
+        <label for="lpWeb">No completar este campo</label>
+        <input type="text" id="lpWeb" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
       <h2 class="lp-form__title">Pedí tu diagnóstico</h2>
 
       <div class="form__group">

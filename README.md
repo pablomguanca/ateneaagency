@@ -13,7 +13,12 @@ posicionamiento original y quedó atrás.
 ### Reglas duras de contenido
 1. **Sin paquetes ni precios.** Nada de tablas Starter/Estándar/Premium, montos en USD ni rangos. El alcance y la
    inversión se definen después del diagnóstico inicial.
-2. **El CTA siempre es el diagnóstico** ("Solicitá tu diagnóstico"), nunca una lista de precios.
+2. **El CTA nunca es una lista de precios.** En el sitio principal (`index`, `servicios`, `nosotros`,
+   `contacto`) el llamado a la acción es **"Coordinar la llamada"**, alineado con el "Agendar llamada" del hero:
+   una sola conversión, una sola promesa. El **diagnóstico es el beneficio** (lo que el cliente se lleva de esa
+   llamada), y por eso vive en los títulos y el copy de apoyo, no en los botones. La landing `diagnostico.html`
+   es la excepción deliberada: mantiene "Solicitar diagnóstico" porque tiene que dar continuidad al anuncio del
+   que llega el tráfico.
    **Terminología:** "diagnóstico" y "auditoría" no son dos ofertas distintas — la auditoría es el trabajo
    (revisar qué hay hoy) y el diagnóstico es el resultado que recibe el cliente. En todo el sitio, la **oferta
    se llama siempre "diagnóstico"**; "auditamos" aparece solo como el paso 2 del método. No mezclarlos como si
@@ -107,8 +112,9 @@ atenea-agency/
 │   │   ├── _page-hero.scss
 │   │   ├── _split.scss    ← bloque imagen + texto (reutilizado en home, servicios y nosotros)
 │   │   ├── _forms.scss    ← inputs, labels y validación (home y contacto)
-│   │   ├── _process.scss  ← los 4 pasos (reutilizado en home y servicios)
-│   │   └── _steps.scss    ← secuencia numerada con flechas (home y servicios)
+│   │   ├── _process.scss  ← los 4 pasos + línea de tiempo animada (home y diagnóstico)
+│   │   ├── _steps.scss    ← secuencia numerada con flechas (home y servicios)
+│   │   └── _marquee.scss  ← tira de clientes en loop infinito (markup comentado en index.html)
 │   ├── layout/
 │   │   ├── _hero.scss
 │   │   └── _sections.scss
@@ -238,17 +244,65 @@ marca de ese desarrollo—, no esta. Esta es para captar clientes de Atenea.
 
 ### Formularios
 
-Hay **dos**, y cumplen funciones distintas a propósito (no son duplicados):
+Hay **tres**, y cumplen funciones distintas a propósito (no son duplicados):
 
-- **Corto**, en el bloque final de `index.html`: nombre, email/teléfono y mensaje. Captura de baja fricción para
-  el tráfico que cae en la home, sobre todo el que viene de pauta.
+- **Corto**, en el bloque final de `index.html`: nombre, teléfono, email y mensaje opcional. Captura de baja
+  fricción para el tráfico que cae en la home, sobre todo el que viene de pauta.
 - **Completo**, en `contacto.html`: suma tipo de proyecto y servicio de interés, para quien quiere dar contexto.
+- **Landing**, en `diagnostico.html`: nombre, un campo combinado email/teléfono y tipo de proyecto.
 
-Ambos los maneja **el mismo código** en `js/main.js`: la lógica recorre todos los `.js-contact-form`, así que para
-sumar otro formulario alcanza con darle esa clase, un `.js-form-status` donde escribir la respuesta y un
-`<button type="submit">` con un `<span>` adentro. Hoy validan en el cliente y **simulan** el envío; para
-conectarlos a un backend real hay que reemplazar el `setTimeout` por un `fetch` a un endpoint propio, Formspree
-o EmailJS.
+Los maneja **el mismo código** en `js/main.js`: la lógica recorre todos los `.js-contact-form`. Para sumar otro
+formulario alcanza con darle esa clase, un `.js-form-status` donde escribir la respuesta, un `<button
+type="submit">` con un `<span>` adentro, un `data-origen="..."` para saber de dónde vino el lead y el bloque
+`.form__honeypot` copiado de cualquiera de los tres (con un `id` distinto).
+
+Validan en el cliente y postean a `/api/contact` (ver abajo), que reenvía por mail.
+
+#### Teléfono
+
+Solo dígitos, con un `+` inicial opcional para números del exterior. La regla está en dos capas: el
+`pattern="\+?[0-9]{8,15}"` del HTML valida al enviar, y un listener en `js/main.js` limpia lo que se escriba o
+pegue en cualquier `input[type="tel"]` (el `+` sobrevive únicamente en la primera posición). Si hay que aflojar
+el rango de 8–15 dígitos, se toca el `pattern` en `index.html` y `contacto.html`.
+
+### Envío de mails (`api/contact.js`)
+
+Función serverless de Vercel, **sin dependencias**: llama a la API REST de Resend con el `fetch` nativo de Node,
+así el repo sigue sin `package.json` ni `node_modules`.
+
+La dirección de destino **no está en el código ni en el HTML**: sale de la variable `CONTACT_TO`. Cuando se migre
+del Gmail al mail corporativo, se cambia esa variable en Vercel y listo — no hay que tocar ni redeployar el sitio.
+
+**Variables de entorno** (Vercel → Project → Settings → Environment Variables):
+
+| Variable | Obligatoria | Para qué |
+|---|---|---|
+| `RESEND_API_KEY` | Sí | API key de Resend. Sin esto el formulario responde error y no manda nada. |
+| `CONTACT_TO` | No | Destino de los leads. Por defecto `atenea.agency.1@gmail.com`. |
+| `CONTACT_FROM` | No | Remitente. Por defecto `onboarding@resend.dev`, que **solo entrega al mail dueño de la cuenta de Resend**: sirve para probar, no para producción. |
+
+**Puesta en marcha:**
+
+1. Crear cuenta en [resend.com](https://resend.com) y generar una API key.
+2. Cargar `RESEND_API_KEY` en Vercel (los tres entornos: Production, Preview, Development).
+3. Verificar `ateneaagency.com.ar` en Resend (agrega unos registros DNS: SPF, DKIM y DMARC). **Este paso no es
+   opcional para producción**: sin dominio verificado los mails se van a spam o directamente no salen.
+4. Una vez verificado, setear `CONTACT_FROM` a algo del dominio propio, por ejemplo
+   `Atenea Agency <web@ateneaagency.com.ar>`.
+5. Redeployar para que tome las variables.
+
+**Qué ya trae resuelto:**
+
+- El `to` sale siempre de la variable de entorno; un atacante no puede secuestrar el destinatario mandando un
+  campo `to` en el body (los campos que no están en la lista blanca se descartan).
+- `reply_to` con el mail del interesado, así se le responde directo desde la bandeja de entrada.
+- Honeypot (`.form__honeypot`): campo invisible que los bots completan. Si viene lleno responde 200 fingiendo
+  éxito y no manda nada.
+- Escapado de HTML en el cuerpo del mail.
+- Validación en el servidor, independiente de la del navegador.
+- Freno de 5 envíos por IP cada 10 minutos. Es **best-effort**: cada instancia serverless tiene su propia
+  memoria, así que no reemplaza a un rate limit real. Si aparece spam en volumen, conviene sumar Turnstile o
+  hCaptcha.
 
 ## Pendientes (buscar `TODO` en el repo)
 
@@ -324,8 +378,10 @@ que resuelve `/servicios` igual que Vercel, aunque no tiene el auto-reload de Li
 
 ## Deploy en Vercel
 
-Sitio 100% estático (sin backend), así que Vercel lo sirve sin ningún build command: alcanza con importar el
-repositorio o arrastrar la carpeta del proyecto.
+El sitio es estático y no necesita build command. La única parte dinámica es `api/contact.js`, la función que
+manda los mails de los formularios: Vercel detecta sola la carpeta `api/` y la deploya como serverless function,
+sin configuración extra. **Ojo: eso significa que el sitio ya no corre completo con un server estático suelto —
+en local, `/api/contact` solo responde con `vercel dev`.**
 
 1. Compilar el SASS final minificado **antes de cada push** (Vercel no compila SASS, solo sirve archivos):
    ```
@@ -333,14 +389,16 @@ repositorio o arrastrar la carpeta del proyecto.
    ```
    `css/styles.css` tiene que quedar commiteado siempre actualizado.
 2. Reemplazar los placeholders (WhatsApp, email — ver sección de abajo) antes de publicar.
-3. En el dashboard de Vercel: **Add New → Project**, importar el repo (o `vercel` desde la CLI parado en esta
+3. Cargar `RESEND_API_KEY` en las variables de entorno del proyecto y verificar el dominio en Resend (ver
+   "Envío de mails" más arriba). Sin esto los formularios muestran el mensaje de error.
+4. En el dashboard de Vercel: **Add New → Project**, importar el repo (o `vercel` desde la CLI parado en esta
    carpeta). Framework Preset: **Other**. No hace falta configurar Build Command ni Output Directory: al no
    detectar un framework, Vercel sirve el contenido de la raíz del proyecto tal cual.
-4. Conectar el dominio: **Project → Settings → Domains**, agregar `ateneaagency.com.ar`. Vercel va a pedir
+5. Conectar el dominio: **Project → Settings → Domains**, agregar `ateneaagency.com.ar`. Vercel va a pedir
    apuntar el DNS del dominio (donde lo hayan comprado, ej. Hostinger u otro registrador) hacia Vercel —
    generalmente un registro `A` a `76.76.21.21` y un `CNAME` de `www` a `cname.vercel-dns.com`, pero conviene
    seguir las instrucciones exactas que muestra Vercel al agregar el dominio, porque pueden variar.
-5. Agregar también `www.ateneaagency.com.ar` como dominio en el mismo proyecto: la redirección de `www` hacia
+6. Agregar también `www.ateneaagency.com.ar` como dominio en el mismo proyecto: la redirección de `www` hacia
    el dominio sin `www` ya está resuelta en `vercel.json`.
 
 `vercel.json` deja configurado: redirección `www` → sin `www`, cabeceras de seguridad básicas y cache largo
