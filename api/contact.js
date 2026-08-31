@@ -5,17 +5,26 @@
  * migren al mail corporativo, se cambia esa variable en Vercel y listo, sin
  * tocar el HTML ni volver a deployar.
  *
+ * Además, si el usuario marcó el opt-in, da de alta el contacto en la lista
+ * de Brevo y le manda un mail de confirmación. Ninguna de esas dos cosas
+ * puede tumbar el aviso interno: lo único que no se puede perder es que la
+ * consulta le llegue a la agencia, así que van aisladas y solo se loguean.
+ *
  * Variables de entorno (Vercel → Settings → Environment Variables):
  *   RESEND_API_KEY  (obligatoria)  API key de Resend.
  *   CONTACT_TO      (opcional)     Destino. Por defecto, el Gmail de la agencia.
  *   CONTACT_FROM    (opcional)     Remitente. Tiene que ser de un dominio
  *                                  verificado en Resend para entregar bien.
+ *   BREVO_API_KEY   (opcional)     API key de Brevo. Sin ella no se suscribe
+ *                                  a nadie, pero el formulario sigue andando.
+ *   BREVO_LIST_ID   (opcional)     ID numérico de la lista de Brevo.
  *
  * Sin dependencias a propósito: usa el fetch global de Node 18+, así el repo
  * se mantiene estático y sin package.json.
  */
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
+const BREVO_CONTACTS_ENDPOINT = 'https://api.brevo.com/v3/contacts';
 
 const DEFAULT_TO = 'atenea.agency.1@gmail.com';
 const DEFAULT_FROM = 'Atenea Agency <onboarding@resend.dev>';
@@ -75,6 +84,12 @@ function text(value, max) {
   return value.replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
+// El checkbox desmarcado ni siquiera viaja en el FormData, así que basta con
+// reconocer las formas afirmativas que puede tomar cuando sí viene.
+function optedIn(value) {
+  return ['si', 'sí', 'yes', 'true', 'on', '1'].includes(String(value).toLowerCase());
+}
+
 function escapeHtml(value) {
   return value
     .replace(/&/g, '&amp;')
@@ -82,6 +97,96 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/**
+ * Alta en la lista de Brevo. `updateEnabled` evita el 409 cuando alguien que
+ * ya está en la lista vuelve a consultar: en vez de fallar, actualiza.
+ *
+ * Los atributos tienen que existir antes en Brevo (Contactos → Configuración
+ * → Atributos). Si falta alguno, la API devuelve 400 y el detalle queda en
+ * el log de la función.
+ */
+async function subscribeToBrevo(data, origen) {
+  const apiKey = process.env.BREVO_API_KEY;
+  const listId = Number(process.env.BREVO_LIST_ID);
+
+  if (!apiKey || !listId) {
+    console.warn('[contact] Opt-in marcado, pero falta BREVO_API_KEY o BREVO_LIST_ID: no se dio de alta.');
+    return false;
+  }
+
+  const response = await fetch(BREVO_CONTACTS_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'api-key': apiKey,
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
+    body: JSON.stringify({
+      email: data.email,
+      listIds: [listId],
+      updateEnabled: true,
+      attributes: {
+        NOMBRE: data.nombre,
+        TELEFONO: data.telefono || '',
+        PROYECTO: data.proyecto || '',
+        ORIGEN: origen
+      }
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Brevo respondió ${response.status}: ${await response.text()}`);
+  }
+
+  return true;
+}
+
+/**
+ * Confirmación para el interesado. Es un solo mail, no dos: si además se
+ * suscribió, se le agrega el párrafo de la lista en vez de mandarle otro
+ * correo simultáneo. El reply-to apunta a la agencia, así una respuesta a
+ * esta confirmación llega a la bandeja correcta.
+ */
+async function sendWelcomeEmail(apiKey, data, suscripto) {
+  const nombre = data.nombre.split(' ')[0];
+
+  const parrafos = [
+    `Hola ${nombre}, gracias por escribirnos.`,
+    'Recibimos tu consulta y te respondemos dentro de las 24 horas hábiles para coordinar la llamada.'
+  ];
+
+  if (suscripto) {
+    parrafos.push(
+      'Además te sumamos a nuestra lista de novedades sobre marketing inmobiliario. ' +
+      'Si preferís no recibirlas, respondé este mail y te damos de baja.'
+    );
+  }
+
+  parrafos.push('Pablo y Carolina — Atenea Agency');
+
+  const response = await fetch(RESEND_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      from: process.env.CONTACT_FROM || DEFAULT_FROM,
+      to: [data.email],
+      reply_to: process.env.CONTACT_TO || DEFAULT_TO,
+      subject: 'Recibimos tu consulta — Atenea Agency',
+      text: parrafos.join('\n\n'),
+      html: parrafos
+        .map(p => `<p style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#111">${escapeHtml(p)}</p>`)
+        .join('')
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Resend respondió ${response.status}: ${await response.text()}`);
+  }
 }
 
 module.exports = async (req, res) => {
@@ -192,6 +297,36 @@ module.exports = async (req, res) => {
     }
 
     recordHit(ip);
+
+    // A partir de acá el lead ya está a salvo en la bandeja de la agencia.
+    // Todo lo que sigue es secundario y se aísla: si falla, se loguea y el
+    // usuario igual ve la confirmación.
+    const quiereSuscribirse = optedIn(body.suscripcion);
+
+    // Refleja el alta que realmente ocurrió, no la intención: si Brevo falla,
+    // el mail de bienvenida no puede decirle que quedó suscripto.
+    let suscripto = false;
+
+    if (quiereSuscribirse && !data.email) {
+      console.warn('[contact] Opt-in marcado sin dirección de mail: no hay a qué suscribir.');
+    }
+
+    if (quiereSuscribirse && data.email) {
+      try {
+        suscripto = await subscribeToBrevo(data, origen);
+      } catch (error) {
+        console.error('[contact] No se pudo dar de alta en Brevo:', error);
+      }
+    }
+
+    if (data.email) {
+      try {
+        await sendWelcomeEmail(apiKey, data, suscripto);
+      } catch (error) {
+        console.error('[contact] No se pudo enviar el mail de bienvenida:', error);
+      }
+    }
+
     return res.status(200).json({ ok: true });
   } catch (error) {
     console.error('[contact] Error de red al llamar a Resend:', error);

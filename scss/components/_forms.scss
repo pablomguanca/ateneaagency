@@ -69,6 +69,69 @@
     align-self: flex-start;
   }
 
+  // Opt-in de la lista de mailing. Va siempre desmarcado: el consentimiento
+  // para recibir campañas es distinto del de que te respondan la consulta.
+  &__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    position: relative;
+    font-size: 0.8rem;
+    font-weight: v.$fw-light;
+    line-height: 1.6;
+    color: v.$color-ivory-dim;
+
+    input[type='checkbox'] {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+    }
+  }
+
+  &__check-box {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    border: 1px solid rgba(v.$color-gold, 0.4);
+    border-radius: 0.3rem;
+    background: v.$color-dark;
+    position: relative;
+    transition:
+      background v.$t-fast,
+      border-color v.$t-fast;
+
+    // Tilde dibujado con dos bordes, sin SVG ni fuente de iconos.
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 6px;
+      width: 4px;
+      height: 8px;
+      border: solid v.$color-dark;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) scale(0);
+      transition: transform v.$t-fast;
+    }
+  }
+
+  &__check input[type='checkbox']:checked + &__check-box {
+    background: v.$color-gold;
+    border-color: v.$color-gold;
+
+    &::after {
+      transform: rotate(45deg) scale(1);
+    }
+  }
+
+  &__check input[type='checkbox']:focus-visible + &__check-box {
+    outline: 2px solid v.$color-gold-bright;
+    outline-offset: 2px;
+  }
+
   &__status {
     font-size: 0.85rem;
     color: v.$color-gold;

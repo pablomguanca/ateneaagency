@@ -280,6 +280,8 @@ del Gmail al mail corporativo, se cambia esa variable en Vercel y listo — no h
 | `RESEND_API_KEY` | Sí | API key de Resend. Sin esto el formulario responde error y no manda nada. |
 | `CONTACT_TO` | No | Destino de los leads. Por defecto `atenea.agency.1@gmail.com`. |
 | `CONTACT_FROM` | No | Remitente. Por defecto `onboarding@resend.dev`, que **solo entrega al mail dueño de la cuenta de Resend**: sirve para probar, no para producción. |
+| `BREVO_API_KEY` | No | API key de Brevo. Sin ella no se suscribe a nadie, pero el formulario sigue funcionando normalmente. |
+| `BREVO_LIST_ID` | No | ID numérico de la lista de Brevo donde entran los contactos. |
 
 **Puesta en marcha:**
 
@@ -303,6 +305,50 @@ del Gmail al mail corporativo, se cambia esa variable en Vercel y listo — no h
 - Freno de 5 envíos por IP cada 10 minutos. Es **best-effort**: cada instancia serverless tiene su propia
   memoria, así que no reemplaza a un rate limit real. Si aparece spam en volumen, conviene sumar Turnstile o
   hCaptcha.
+
+### Lista de mailing (Brevo) y mail de bienvenida
+
+**Por qué dos herramientas y no una.** Resend queda para lo transaccional (aviso interno del lead y confirmación
+al interesado) y Brevo para la lista y las campañas. Separarlas protege la entregabilidad: si una campaña genera
+quejas de spam, no arrastra la reputación de los mails que no pueden fallar. Además Resend Broadcasts manda
+campañas sueltas pero **no automatiza secuencias**, y la nutrición de leads es justamente eso.
+
+**Consentimiento: el checkbox no se toca.** Los tres formularios tienen un opt-in (`name="suscripcion"`)
+**desmarcado por defecto**, y solo se suscribe a quien lo marca. Quien no lo marca igual entra como lead y
+recibe la confirmación. Esto no es opcional:
+
+- La Ley 25.326 exige consentimiento informado. Aceptar que te llamen no es aceptar recibir campañas.
+- Suscribir a gente que no lo pidió genera marcas de spam, y eso quema la reputación del mismo dominio con el
+  que salen las notificaciones internas.
+- La leyenda de `diagnostico.html` promete explícitamente que los datos se usan para responder y, solo si se
+  marca la casilla, para novedades. **Si algún día se suscribe a todos automáticamente, hay que reescribir esa
+  frase primero.**
+
+**Puesta en marcha en Brevo:**
+
+1. Crear la cuenta y una lista; anotar el **ID numérico** de la lista (aparece en la URL y en el panel).
+2. Crear los atributos de contacto en **Contactos → Configuración → Atributos**, los cuatro de tipo texto:
+   `NOMBRE`, `TELEFONO`, `PROYECTO`, `ORIGEN`. Si falta alguno, Brevo rechaza el alta con un 400 y el detalle
+   queda en los logs de la función.
+3. Generar una API key en **SMTP & API → API Keys**.
+4. Cargar `BREVO_API_KEY` y `BREVO_LIST_ID` en Vercel y redeployar.
+
+**Cómo se comporta:**
+
+- El contacto entra con `updateEnabled: true`, así que si alguien que ya está en la lista vuelve a consultar se
+  actualizan sus atributos en vez de fallar con un 409.
+- El atributo `ORIGEN` guarda de qué formulario vino (`Home`, `Contacto`, `Landing diagnóstico`), lo que después
+  permite segmentar campañas por origen del lead.
+- Si el lead marcó el opt-in pero solo dejó un teléfono (caso posible en `diagnostico.html`, que tiene el campo
+  combinado), no hay a qué suscribir: se loguea y sigue.
+- **El aviso interno nunca depende de esto.** El alta en Brevo y el mail de bienvenida van después de que la
+  notificación ya salió, cada uno en su propio `try/catch`. Si Brevo se cae, el lead igual llega.
+- El mail de bienvenida menciona la suscripción **solo si el alta funcionó de verdad**, no si se intentó. Si
+  Brevo falla, el texto no le promete al usuario algo que no pasó.
+
+**Baja de la lista.** Las campañas que salgan por Brevo llevan el link de baja automático. El mail de
+bienvenida sale por Resend y ofrece la baja por respuesta ("respondé este mail"). Alcanza mientras el volumen
+sea bajo; si crece, conviene mandar también la bienvenida desde Brevo para que gestione la baja sola.
 
 ## Pendientes (buscar `TODO` en el repo)
 

@@ -1059,11 +1059,12 @@ p {
 .split__list li::before {
   content: "";
   flex-shrink: 0;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  width: 10px;
+  height: 10px;
   background: #C9A84C;
-  transform: translateY(-2px);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 1.6 L8.4 8.4 M8.4 1.6 L1.6 8.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 1.6 L8.4 8.4 M8.4 1.6 L1.6 8.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform: translateY(1px);
 }
 
 .process {
@@ -1409,6 +1410,57 @@ p {
 }
 .form__submit {
   align-self: flex-start;
+}
+.form__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  position: relative;
+  font-size: 0.8rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #9E9688;
+}
+.form__check input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.form__check-box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  border-radius: 0.3rem;
+  background: #06060A;
+  position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.form__check-box::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 4px;
+  height: 8px;
+  border: solid #06060A;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.2s ease;
+}
+.form__check input[type=checkbox]:checked + .form__check-box {
+  background: #C9A84C;
+  border-color: #C9A84C;
+}
+.form__check input[type=checkbox]:checked + .form__check-box::after {
+  transform: rotate(45deg) scale(1);
+}
+.form__check input[type=checkbox]:focus-visible + .form__check-box {
+  outline: 2px solid #E8C97A;
+  outline-offset: 2px;
 }
 .form__status {
   font-size: 0.85rem;
