@@ -143,28 +143,162 @@ async function subscribeToBrevo(data, origen) {
   return true;
 }
 
-/**
- * Confirmación para el interesado. Es un solo mail, no dos: si además se
- * suscribió, se le agrega el párrafo de la lista en vez de mandarle otro
- * correo simultáneo. El reply-to apunta a la agencia, así una respuesta a
- * esta confirmación llega a la bandeja correcta.
- */
-async function sendWelcomeEmail(apiKey, data, suscripto) {
-  const nombre = data.nombre.split(' ')[0];
+// Paleta del sitio, en hex sólido. En mail no sirve rgba(): Outlook la
+// ignora, así que los tonos "translúcidos" ya vienen mezclados a mano.
+const MAIL = {
+  fondo: '#06060A',
+  tarjeta: '#0E0E18',
+  panel: '#141222',
+  borde: '#241F33',
+  oro: '#C9A84C',
+  oroClaro: '#E8C97A',
+  marfil: '#F0EBE0',
+  marfilTenue: '#9E9688'
+};
 
+const SERIF = "Georgia,'Times New Roman',Times,serif";
+const SANS = "'Helvetica Neue',Helvetica,Arial,sans-serif";
+
+/**
+ * Plantilla del mail al interesado.
+ *
+ * Está escrita con tablas y estilos inline a propósito: Gmail descarta lo
+ * que haya en <head>, Outlook renderiza con el motor de Word (sin flexbox,
+ * sin grid y sin border-radius) y ningún cliente carga fuentes web. Por eso
+ * Cormorant y DM Sans se reemplazan por Georgia y Helvetica/Arial, que es
+ * lo más cerca que se puede estar de la identidad del sitio.
+ */
+function welcomeTemplate(nombre, suscripto) {
   const parrafos = [
+    'Recibimos tu consulta y ya la estamos leyendo.',
+    'Te respondemos dentro de las 24 horas hábiles para coordinar una llamada y devolverte un primer análisis de tu proyecto.'
+  ];
+
+  const textoPlano = [
     `Hola ${nombre}, gracias por escribirnos.`,
-    'Recibimos tu consulta y te respondemos dentro de las 24 horas hábiles para coordinar la llamada.'
+    ...parrafos
   ];
 
   if (suscripto) {
-    parrafos.push(
+    textoPlano.push(
       'Además te sumamos a nuestra lista de novedades sobre marketing inmobiliario. ' +
       'Si preferís no recibirlas, respondé este mail y te damos de baja.'
     );
   }
 
-  parrafos.push('Pablo y Carolina — Atenea Agency');
+  textoPlano.push('Atenea Agency', 'ateneaagency.com.ar');
+
+  const parrafoHtml = txt =>
+    `<p style="margin:0 0 14px;font-family:${SANS};font-size:15px;line-height:1.75;color:${MAIL.marfilTenue}">${escapeHtml(txt)}</p>`;
+
+  // Bloque de la lista: solo aparece si el alta se concretó de verdad.
+  const bloqueLista = suscripto
+    ? `<tr>
+         <td style="padding:8px 32px 0">
+           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                  style="background-color:${MAIL.panel};border-left:3px solid ${MAIL.oro}">
+             <tr>
+               <td style="padding:16px 20px">
+                 <p style="margin:0 0 6px;font-family:${SANS};font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:${MAIL.oro}">Novedades</p>
+                 <p style="margin:0;font-family:${SANS};font-size:14px;line-height:1.65;color:${MAIL.marfilTenue}">
+                   Te sumamos a nuestra lista de contenido sobre marketing inmobiliario. Si preferís no recibirla, respondé este mail y te damos de baja.
+                 </p>
+               </td>
+             </tr>
+           </table>
+         </td>
+       </tr>`
+    : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Recibimos tu consulta</title>
+</head>
+<body style="margin:0;padding:0;background-color:${MAIL.fondo}">
+
+<!-- Texto de vista previa: se ve en la bandeja, no en el cuerpo del mail. -->
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">
+  Recibimos tu consulta. Te respondemos dentro de las 24 horas hábiles.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${MAIL.fondo}">
+  <tr>
+    <td align="center" style="padding:32px 12px">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+             style="width:100%;max-width:600px;background-color:${MAIL.tarjeta};border:1px solid ${MAIL.borde}">
+
+        <tr>
+          <td align="center" style="padding:38px 32px 0">
+            <div style="font-family:${SERIF};font-size:23px;letter-spacing:1px;color:${MAIL.marfil}">
+              Atenea <span style="color:${MAIL.oro};font-style:italic">Agency</span>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td align="center" style="padding:18px 32px 0">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr><td style="width:54px;height:2px;background-color:${MAIL.oro};font-size:0;line-height:0">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:30px 32px 0">
+            <h1 style="margin:0 0 18px;font-family:${SERIF};font-size:27px;line-height:1.3;font-weight:normal;color:${MAIL.marfil}">
+              Hola ${escapeHtml(nombre)},<br>gracias por escribirnos.
+            </h1>
+            ${parrafos.map(parrafoHtml).join('')}
+          </td>
+        </tr>
+
+        ${bloqueLista}
+
+        <tr>
+          <td style="padding:26px 32px 0">
+            <div style="height:1px;background-color:${MAIL.borde};font-size:0;line-height:0">&nbsp;</div>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:22px 32px 38px">
+            <p style="margin:0 0 4px;font-family:${SERIF};font-size:17px;color:${MAIL.marfil}">Atenea Agency</p>
+            <p style="margin:0 0 12px;font-family:${SANS};font-size:13px;line-height:1.6;color:${MAIL.marfilTenue}">
+              Marketing inmobiliario para desarrollos e inmobiliarias
+            </p>
+            <a href="https://ateneaagency.com.ar" style="font-family:${SANS};font-size:13px;color:${MAIL.oro};text-decoration:none">ateneaagency.com.ar</a>
+          </td>
+        </tr>
+
+      </table>
+
+      <p style="margin:18px 0 0;font-family:${SANS};font-size:11px;line-height:1.6;color:#7A736A">
+        Recibís este mail porque completaste el formulario en ateneaagency.com.ar
+      </p>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>`;
+
+  return { text: textoPlano.join('\n\n'), html };
+}
+
+/**
+ * Confirmación para el interesado. Es un solo mail, no dos: si además se
+ * suscribió, se le agrega el bloque de la lista en vez de mandarle otro
+ * correo simultáneo. El reply-to apunta a la agencia, así una respuesta a
+ * esta confirmación llega a la bandeja correcta.
+ */
+async function sendWelcomeEmail(apiKey, data, suscripto) {
+  const nombre = data.nombre.split(' ')[0];
+  const { text, html } = welcomeTemplate(nombre, suscripto);
 
   const response = await fetch(RESEND_ENDPOINT, {
     method: 'POST',
@@ -177,10 +311,8 @@ async function sendWelcomeEmail(apiKey, data, suscripto) {
       to: [data.email],
       reply_to: process.env.CONTACT_TO || DEFAULT_TO,
       subject: 'Recibimos tu consulta — Atenea Agency',
-      text: parrafos.join('\n\n'),
-      html: parrafos
-        .map(p => `<p style="font-family:Arial,sans-serif;font-size:15px;line-height:1.7;color:#111">${escapeHtml(p)}</p>`)
-        .join('')
+      text,
+      html
     })
   });
 

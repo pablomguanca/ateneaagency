@@ -287,8 +287,14 @@ del Gmail al mail corporativo, se cambia esa variable en Vercel y listo — no h
 
 1. Crear cuenta en [resend.com](https://resend.com) y generar una API key.
 2. Cargar `RESEND_API_KEY` en Vercel (los tres entornos: Production, Preview, Development).
-3. Verificar `ateneaagency.com.ar` en Resend (agrega unos registros DNS: SPF, DKIM y DMARC). **Este paso no es
-   opcional para producción**: sin dominio verificado los mails se van a spam o directamente no salen.
+3. Verificar `ateneaagency.com.ar` en Resend. **Este paso no es opcional para producción**: sin dominio
+   verificado los mails se van a spam o directamente no salen. Los registros se cargan **en Vercel**
+   (Dashboard → Domains → el dominio → DNS Records), porque el DNS se administra ahí — ver el paso 5 de
+   "Deploy en Vercel" para el detalle del campo `Name`. De la pantalla que muestra Resend:
+   - **Domain Verification (DKIM)** y **Enable Sending (SPF)**: obligatorios.
+   - **DMARC**: figura como opcional, conviene hacerlo igual (empezar con `p=none`).
+   - **Enable Receiving**: **saltear**. Es para recibir correo entrante vía Resend y agrega registros MX en la
+     raíz del dominio; no hace falta para enviar, y bloquearía poner Google Workspace o Zoho más adelante.
 4. Una vez verificado, setear `CONTACT_FROM` a algo del dominio propio, por ejemplo
    `Atenea Agency <web@ateneaagency.com.ar>`.
 5. Redeployar para que tome las variables.
@@ -345,6 +351,26 @@ recibe la confirmación. Esto no es opcional:
   notificación ya salió, cada uno en su propio `try/catch`. Si Brevo se cae, el lead igual llega.
 - El mail de bienvenida menciona la suscripción **solo si el alta funcionó de verdad**, no si se intentó. Si
   Brevo falla, el texto no le promete al usuario algo que no pasó.
+
+#### La plantilla del mail (`welcomeTemplate` en `api/contact.js`)
+
+**No se edita como HTML de web.** El correo tiene sus propias reglas y hay que respetarlas:
+
+- **Tablas para maquetar**, nada de flexbox ni grid: Outlook renderiza con el motor de Word y no los soporta.
+- **Estilos inline únicamente.** Gmail descarta lo que haya en `<head>`, así que una hoja de estilos o un
+  bloque `<style>` no llegan.
+- **Sin fuentes web.** Cormorant Garamond y DM Sans no cargan en ningún cliente de correo; la plantilla usa
+  Georgia y Helvetica/Arial, que es lo más parecido disponible.
+- **Colores en hex sólido.** `rgba()` no funciona: los tonos translúcidos de la marca ya vienen mezclados a
+  mano en la constante `MAIL`.
+- **Sin `border-radius`** (Outlook lo ignora, quedan esquinas rectas) y sin imágenes de fondo.
+- Se manda siempre junto con la versión en **texto plano**, que hay que actualizar en paralelo al HTML.
+
+La firma va como **"Atenea Agency"** a secas, sin nombres propios.
+
+Es un diseño oscuro, acorde al sitio. Algunos clientes (Outlook.com, la app de Gmail en ciertos Android)
+fuerzan su propia inversión en modo oscuro y pueden alterar los colores; no hay forma confiable de evitarlo,
+pero la plantilla degrada de manera aceptable.
 
 **Baja de la lista.** Las campañas que salgan por Brevo llevan el link de baja automático. El mail de
 bienvenida sale por Resend y ofrece la baja por respuesta ("respondé este mail"). Alcanza mientras el volumen
@@ -440,10 +466,18 @@ en local, `/api/contact` solo responde con `vercel dev`.**
 4. En el dashboard de Vercel: **Add New → Project**, importar el repo (o `vercel` desde la CLI parado en esta
    carpeta). Framework Preset: **Other**. No hace falta configurar Build Command ni Output Directory: al no
    detectar un framework, Vercel sirve el contenido de la raíz del proyecto tal cual.
-5. Conectar el dominio: **Project → Settings → Domains**, agregar `ateneaagency.com.ar`. Vercel va a pedir
-   apuntar el DNS del dominio (donde lo hayan comprado, ej. Hostinger u otro registrador) hacia Vercel —
-   generalmente un registro `A` a `76.76.21.21` y un `CNAME` de `www` a `cname.vercel-dns.com`, pero conviene
-   seguir las instrucciones exactas que muestra Vercel al agregar el dominio, porque pueden variar.
+5. Conectar el dominio: **Project → Settings → Domains**, agregar `ateneaagency.com.ar`.
+
+   **Estado actual (verificado por consulta DNS): el dominio ya usa los nameservers de Vercel**
+   (`ns1.vercel-dns.com` / `ns2.vercel-dns.com`). Es decir, **el DNS se administra desde Vercel, no desde el
+   registrador donde se compró el dominio.** Cualquier registro que haya que agregar —los de Resend, por
+   ejemplo— se carga en **Dashboard → Domains → `ateneaagency.com.ar` → DNS Records**, y no en el panel del
+   registrador.
+
+   Al cargar registros ahí, **el campo `Name` va relativo, sin el dominio**: si el proveedor indica
+   `resend._domainkey.ateneaagency.com.ar`, en Vercel se pone solo `resend._domainkey`. Poner el nombre
+   completo genera `...ateneaagency.com.ar.ateneaagency.com.ar` y la verificación nunca pasa. Para la raíz del
+   dominio, el campo va vacío o con `@`.
 6. Agregar también `www.ateneaagency.com.ar` como dominio en el mismo proyecto: la redirección de `www` hacia
    el dominio sin `www` ya está resuelta en `vercel.json`.
 
