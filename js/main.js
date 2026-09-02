@@ -3,8 +3,6 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const cursor = document.getElementById('cursor');
 const cursorRing = document.getElementById('cursorRing');
 
-// El cursor custom y el parallax son puro movimiento: si el sistema pide
-// menos animacion, directamente no se inicializan (el CSS ademas los oculta).
 if (cursor && cursorRing && !reducedMotion.matches) {
   let mouseX = 0, mouseY = 0;
   let ringX = 0, ringY = 0;
@@ -97,11 +95,6 @@ function applyScrollParallax() {
   if (layer2) layer2.style.transform = `translateY(${currentScrollY * -0.14}px)`;
 }
 
-/* Scroll reveal --------------------------------------------------------
-   Un solo observer para todo el sitio. El escalonado interno de cada
-   seccion vive en el CSS (nth-child), no aca: antes se calculaba con el
-   indice del lote de entries, que cambia segun cuantos elementos crucen
-   el viewport en el mismo frame y daba delays distintos en cada visita. */
 const revealTargets = document.querySelectorAll('.reveal');
 
 if (reducedMotion.matches) {
@@ -112,7 +105,6 @@ if (reducedMotion.matches) {
       if (!entry.isIntersecting) return;
       entry.target.classList.add('on');
       revealObserver.unobserve(entry.target);
-      // Libera la capa de composicion una vez terminada la transicion.
       setTimeout(() => entry.target.classList.remove('is-pending'), 1000);
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -8% 0px' });
@@ -123,10 +115,6 @@ if (reducedMotion.matches) {
   });
 }
 
-/* Stack de cards de servicios ------------------------------------------
-   Escribe custom properties en vez de style.transform para que el hover
-   (--card-lift) y el reveal (--card-reveal-y) puedan componer con el
-   scroll en lugar de ser pisados en el frame siguiente. */
 const cards = document.querySelectorAll('.strip__item');
 const stickyTop = 250;
 const buriedClasses = ['is-buried-1', 'is-buried-2', 'is-buried-3', 'is-buried-4', 'is-buried-5'];
@@ -174,10 +162,6 @@ function updateCards() {
   });
 }
 
-/* Linea de tiempo del proceso ------------------------------------------
-   El riel se completa con --process-progress (0 -> 1) y cada nodo se
-   enciende cuando el relleno llega a su posicion real, medida del layout
-   en vez de asumir columnas parejas. */
 const processGrids = Array.from(document.querySelectorAll('.process__grid'));
 const verticalTimelineQuery = window.matchMedia('(max-width: 899px)');
 let timelines = [];
@@ -251,12 +235,6 @@ measureTimelines();
 updateTimeline();
 updateCards();
 
-/* Telefono: solo digitos, con + inicial opcional -----------------------
-   El pattern del HTML valida al enviar; esto ademas impide escribir,
-   pegar o soltar cualquier otra cosa. El + solo sobrevive en la primera
-   posicion: en el medio se descarta como cualquier otro simbolo.
-   El cursor se recoloca contando los caracteres que sobrevivieron antes
-   de el, para que no salte al final al limpiar algo del medio. */
 document.querySelectorAll('input[type="tel"]').forEach(input => {
   input.addEventListener('input', () => {
     const raw = input.value;
@@ -273,9 +251,6 @@ document.querySelectorAll('input[type="tel"]').forEach(input => {
   });
 });
 
-/* Envio de formularios -------------------------------------------------
-   Postea a /api/contact, que reenvia por mail. El destino vive en una
-   variable de entorno de Vercel (CONTACT_TO), no aca ni en el HTML. */
 const ERROR_MESSAGE = 'No pudimos enviar tu mensaje. Probá de nuevo en unos minutos o escribinos por WhatsApp.';
 
 document.querySelectorAll('.js-contact-form').forEach(form => {

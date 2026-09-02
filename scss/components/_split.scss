@@ -38,6 +38,13 @@
     &--portrait {
       aspect-ratio: 3 / 4;
     }
+
+    // Ilustraciones que solo aportan en desktop: en mobile no se muestran.
+    &--hide-mobile {
+      @include m.below-md {
+        display: none;
+      }
+    }
   }
 
   &__img {
@@ -94,13 +101,23 @@
       &::before {
         content: '';
         flex-shrink: 0;
-        width: 10px;
-        height: 10px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
         background: v.$color-gold;
-        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 1.6 L8.4 8.4 M8.4 1.6 L1.6 8.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
-        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 1.6 L8.4 8.4 M8.4 1.6 L1.6 8.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
-        transform: translateY(1px);
+        transform: translateY(-2px);
       }
+    }
+
+    // Solo para enumerar problemas: los ítems que describen el camino que no
+    // funciona. En listas neutras o afirmativas va el punto de arriba.
+    &--cross li::before {
+      width: 10px;
+      height: 10px;
+      border-radius: 0;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 1.6 L8.4 8.4 M8.4 1.6 L1.6 8.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 1.6 L8.4 8.4 M8.4 1.6 L1.6 8.4' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+      transform: translateY(1px);
     }
   }
 }

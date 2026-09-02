@@ -103,9 +103,9 @@
         <select class="form__input form__select" id="lpProyecto" name="proyecto" required>
           <option value="" disabled selected>Elegí una opción</option>
           <option value="desarrollo-pozo">Desarrollo en pozo</option>
+          <option value="loteo">Loteo o barrio cerrado</option>
           <option value="inmobiliaria">Inmobiliaria</option>
-          <option value="propiedad">Propiedad individual</option>
-          <option value="otro-rubro">Otro rubro</option>
+          <option value="otro">Otro</option>
         </select>
       </div>
 
@@ -222,10 +222,207 @@
   </section>
 
   <section class="split reveal" aria-labelledby="lp-mercado-title">
-    <div class="split__media">
-      <img class="split__img" src="assets/img/google_atenea.webp"
-        alt="Búsqueda online de propiedades, el punto de partida de la mayoría de los compradores" loading="lazy"
-        decoding="async" width="800" height="600">
+    <div class="split__media split__media--hide-mobile">
+      <svg class="fx-svg" viewBox="0 0 800 600" role="img" preserveAspectRatio="xMidYMid slice"
+        aria-label="Grilla de fichas idénticas en un portal inmobiliario: la tuya, señalada, se ve igual que todas las demás">
+        <title>Tu ficha compite contra cientos de fichas iguales</title>
+
+        <defs>
+          <radialGradient id="fichaGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.1" />
+            <stop offset="60%" stop-color="#C9A84C" stop-opacity="0.028" />
+            <stop offset="100%" stop-color="#C9A84C" stop-opacity="0" />
+          </radialGradient>
+          <linearGradient id="fichaFade" x1="0" y1="455" x2="0" y2="600" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#0A0A12" stop-opacity="0" />
+            <stop offset="100%" stop-color="#0A0A12" stop-opacity="1" />
+          </linearGradient>
+        </defs>
+
+        <rect width="800" height="600" fill="#0A0A12" />
+        <g data-fade style="--d:1.05s">
+          <ellipse data-loop="pulse" style="--dur:5.6s; --d2:1.4s; --lo:0.45" cx="493" cy="371" rx="205" ry="178"
+            fill="url(#fichaGlow)" />
+        </g>
+
+        <g data-fade style="--d:0s">
+          <rect x="40" y="26" width="400" height="36" rx="18" fill="rgba(255,255,255,0.025)"
+            stroke="rgba(201,168,76,0.16)" />
+          <g fill="none" stroke="rgba(201,168,76,0.45)" stroke-width="1.3" stroke-linecap="round">
+            <circle cx="64" cy="42" r="5.5" />
+            <line x1="68" y1="46" x2="72.5" y2="50.5" />
+          </g>
+          <text x="86" y="48" fill="rgba(240,235,224,0.3)" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="16" font-weight="300">departamentos en venta</text>
+          <text x="760" y="48" text-anchor="end" fill="rgba(158,150,136,0.55)"
+            font-family="'DM Sans', system-ui, sans-serif" font-size="14" font-weight="500"
+            letter-spacing="2.6">1.248 RESULTADOS</text>
+          <line x1="40" y1="88" x2="760" y2="88" stroke="rgba(201,168,76,0.1)" stroke-width="1" />
+        </g>
+
+        <g class="fx-svg__grid">
+          <g data-fade style="--d:0.120s">
+            <rect x="40" y="112" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="50" y="122" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M78 190 L102 162 L126 190 Z"/>
+              <path d="M114 190 L132 170 L150 190 Z"/>
+              <circle cx="156" cy="146" r="5.5"/>
+            </g>
+            <rect x="50" y="210" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="50" y="224" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="50" y="242" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.165s">
+            <rect x="226" y="112" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="236" y="122" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M264 190 L288 162 L312 190 Z"/>
+              <path d="M300 190 L318 170 L336 190 Z"/>
+              <circle cx="342" cy="146" r="5.5"/>
+            </g>
+            <rect x="236" y="210" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="236" y="224" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="236" y="242" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.210s">
+            <rect x="412" y="112" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="422" y="122" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M450 190 L474 162 L498 190 Z"/>
+              <path d="M486 190 L504 170 L522 190 Z"/>
+              <circle cx="528" cy="146" r="5.5"/>
+            </g>
+            <rect x="422" y="210" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="422" y="224" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="422" y="242" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.255s">
+            <rect x="598" y="112" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="608" y="122" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M636 190 L660 162 L684 190 Z"/>
+              <path d="M672 190 L690 170 L708 190 Z"/>
+              <circle cx="714" cy="146" r="5.5"/>
+            </g>
+            <rect x="608" y="210" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="608" y="224" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="608" y="242" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.300s">
+            <rect x="40" y="296" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="50" y="306" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M78 374 L102 346 L126 374 Z"/>
+              <path d="M114 374 L132 354 L150 374 Z"/>
+              <circle cx="156" cy="330" r="5.5"/>
+            </g>
+            <rect x="50" y="394" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="50" y="408" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="50" y="426" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.345s">
+            <rect x="226" y="296" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="236" y="306" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M264 374 L288 346 L312 374 Z"/>
+              <path d="M300 374 L318 354 L336 374 Z"/>
+              <circle cx="342" cy="330" r="5.5"/>
+            </g>
+            <rect x="236" y="394" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="236" y="408" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="236" y="426" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.390s">
+            <rect x="412" y="296" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="422" y="306" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M450 374 L474 346 L498 374 Z"/>
+              <path d="M486 374 L504 354 L522 374 Z"/>
+              <circle cx="528" cy="330" r="5.5"/>
+            </g>
+            <rect x="422" y="394" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="422" y="408" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="422" y="426" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.435s">
+            <rect x="598" y="296" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="608" y="306" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M636 374 L660 346 L684 374 Z"/>
+              <path d="M672 374 L690 354 L708 374 Z"/>
+              <circle cx="714" cy="330" r="5.5"/>
+            </g>
+            <rect x="608" y="394" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="608" y="408" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="608" y="426" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.480s">
+            <rect x="40" y="480" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="50" y="490" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M78 558 L102 530 L126 558 Z"/>
+              <path d="M114 558 L132 538 L150 558 Z"/>
+              <circle cx="156" cy="514" r="5.5"/>
+            </g>
+            <rect x="50" y="578" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="50" y="592" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="50" y="610" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.525s">
+            <rect x="226" y="480" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="236" y="490" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M264 558 L288 530 L312 558 Z"/>
+              <path d="M300 558 L318 538 L336 558 Z"/>
+              <circle cx="342" cy="514" r="5.5"/>
+            </g>
+            <rect x="236" y="578" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="236" y="592" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="236" y="610" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.570s">
+            <rect x="412" y="480" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="422" y="490" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M450 558 L474 530 L498 558 Z"/>
+              <path d="M486 558 L504 538 L522 558 Z"/>
+              <circle cx="528" cy="514" r="5.5"/>
+            </g>
+            <rect x="422" y="578" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="422" y="592" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="422" y="610" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+          <g data-fade style="--d:0.615s">
+            <rect x="598" y="480" width="162" height="150" rx="10" fill="rgba(255,255,255,0.018)" stroke="rgba(255,255,255,0.055)"/>
+            <rect x="608" y="490" width="142" height="76" rx="6" fill="rgba(255,255,255,0.035)"/>
+            <g fill="rgba(255,255,255,0.05)">
+              <path d="M636 558 L660 530 L684 558 Z"/>
+              <path d="M672 558 L690 538 L708 558 Z"/>
+              <circle cx="714" cy="514" r="5.5"/>
+            </g>
+            <rect x="608" y="578" width="104" height="6" rx="3" fill="rgba(240,235,224,0.14)"/>
+            <rect x="608" y="592" width="72" height="5" rx="2.5" fill="rgba(240,235,224,0.09)"/>
+            <rect x="608" y="610" width="54" height="7" rx="3.5" fill="rgba(240,235,224,0.12)"/>
+          </g>
+        </g>
+
+        <g class="fx-svg__mark">
+          <path d="M423 287 L403 287 L403 307" data-draw style="--d:0.85s; --len:40"
+            stroke-dasharray="40" stroke-dashoffset="40" fill="none" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="square"/>
+          <path d="M563 287 L583 287 L583 307" data-draw style="--d:0.91s; --len:40"
+            stroke-dasharray="40" stroke-dashoffset="40" fill="none" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="square"/>
+          <path d="M583 435 L583 455 L563 455" data-draw style="--d:0.97s; --len:40"
+            stroke-dasharray="40" stroke-dashoffset="40" fill="none" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="square"/>
+          <path d="M423 455 L403 455 L403 435" data-draw style="--d:1.03s; --len:40"
+            stroke-dasharray="40" stroke-dashoffset="40" fill="none" stroke="#C9A84C" stroke-width="1.3" stroke-linecap="square"/>
+          <text x="403" y="277" data-fade style="--d:1.1s" fill="#C9A84C"
+            font-family="'DM Sans', system-ui, sans-serif" font-size="15" font-weight="500"
+            letter-spacing="4.5">TU FICHA</text>
+        </g>
+
+        <rect x="0" y="455" width="800" height="145" fill="url(#fichaFade)" />
+      </svg>
     </div>
     <div class="split__text">
       <p class="split__label">Por qué te lo proponemos</p>
@@ -241,6 +438,121 @@
     </div>
   </section>
 
+  <section class="shift" aria-labelledby="lp-shift-title">
+    <div class="shift__header reveal">
+      <p class="shift__label">El cambio</p>
+      <h2 class="shift__title" id="lp-shift-title">Pasá de <em>esto…</em><br>a <em>esto</em></h2>
+      <p class="shift__intro">
+        El diagnóstico es la foto del punto de partida. De un lado, el círculo en el que hoy caen la mayoría de
+        los proyectos. Del otro, cómo se ordena cuando hay un sistema detrás.
+      </p>
+    </div>
+
+    <div class="shift__stage shift__stage--before reveal">
+      <p class="shift__stage-label">Hoy</p>
+      <ol class="steps steps--muted">
+        <li class="steps__item">
+          <span class="steps__num">01</span>
+          <h3 class="steps__title">Alta inversión en portales</h3>
+          <p class="steps__desc">Tu desarrollo se muestra junto a otras cientos de fichas parecidas y no destaca,
+            simplemente porque es un catálogo gigante.</p>
+          <svg class="steps__arrow" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+            <path d="M2 12 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+              stroke-linecap="round" />
+            <path d="M25 5 L34 12 L25 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </li>
+        <li class="steps__item">
+          <span class="steps__num">02</span>
+          <h3 class="steps__title">Anuncios mal estructurados</h3>
+          <p class="steps__desc">Mostrar el proyecto sin apuntar a un tipo de cliente específico. Ideal para
+            atraer curiosos que miran propiedades por entretenimiento.</p>
+          <svg class="steps__arrow" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+            <path d="M2 12 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+              stroke-linecap="round" />
+            <path d="M25 5 L34 12 L25 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </li>
+        <li class="steps__item">
+          <span class="steps__num">03</span>
+          <h3 class="steps__title">Un CRM lleno de <em>¿consultas?</em></h3>
+          <p class="steps__desc">Tu plataforma de gestión con muchas consultas de ningún valor, producto de
+            cumplir al pie de la letra con el punto 1 y 2.</p>
+          <svg class="steps__arrow" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+            <path d="M2 12 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+              stroke-linecap="round" />
+            <path d="M25 5 L34 12 L25 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </li>
+        <li class="steps__item">
+          <span class="steps__num">04</span>
+          <h3 class="steps__title">Sin ventas ni captaciones</h3>
+          <p class="steps__desc">El círculo se cierra: invertiste tiempo y plata, pero sin un sistema detrás el
+            esfuerzo no se traduce en operaciones.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="shift__pivot reveal" aria-hidden="true">
+      <svg viewBox="0 0 24 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2 V36" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+          stroke-linecap="round" />
+        <path d="M5 34 L12 43 L19 34" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </div>
+
+    <div class="shift__stage shift__stage--after reveal">
+      <p class="shift__stage-label">Con el Sistema de Adquisición</p>
+      <ol class="steps">
+        <li class="steps__item">
+          <span class="steps__num">01</span>
+          <h3 class="steps__title">Definimos tu cliente y creamos la estructura</h3>
+          <p class="steps__desc">Nos enfocamos en el perfil de tu cliente, creamos y activamos los canales
+            necesarios para llegar a él.</p>
+          <svg class="steps__arrow" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+            <path d="M2 12 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+              stroke-linecap="round" />
+            <path d="M25 5 L34 12 L25 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </li>
+        <li class="steps__item">
+          <span class="steps__num">02</span>
+          <h3 class="steps__title">Estructuramos los anuncios para filtrar</h3>
+          <p class="steps__desc">Creamos y guionamos los anuncios filtrando curiosos y leads fríos para traerte
+            leads calificados con intención de compra real.</p>
+          <svg class="steps__arrow" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+            <path d="M2 12 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+              stroke-linecap="round" />
+            <path d="M25 5 L34 12 L25 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </li>
+        <li class="steps__item">
+          <span class="steps__num">03</span>
+          <h3 class="steps__title">Seguimiento, optimización y nutrición</h3>
+          <p class="steps__desc">Nutrimos a tu cliente en cada etapa de su decisión enviándole emails y adaptando
+            el contenido de los anuncios y el contenido orgánico de tu proyecto.</p>
+          <svg class="steps__arrow" viewBox="0 0 40 24" fill="none" aria-hidden="true">
+            <path d="M2 12 H28" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"
+              stroke-linecap="round" />
+            <path d="M25 5 L34 12 L25 19" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </li>
+        <li class="steps__item">
+          <span class="steps__num">04</span>
+          <h3 class="steps__title">Leads con intención real de compra</h3>
+          <p class="steps__desc">Tu equipo comercial deja de perder tiempo con curiosos y se concentra en quienes
+            realmente quieren comprar.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
   <section class="process reveal" aria-labelledby="lp-proceso-title">
     <div class="process__header">
       <p class="process__label">Y después del diagnóstico</p>
@@ -280,7 +592,7 @@
   <section class="lp-close reveal" aria-labelledby="lp-cierre-title">
     <h2 class="lp-close__title" id="lp-cierre-title">Empecemos por<br>el <em>diagnóstico</em></h2>
     <p class="lp-close__lead">
-      Es gratis, no te compromete a nada y en 24 horas hábiles tenés una lectura clara de dónde está parado tu
+      Es gratis, no te compromete a nada y tenés una lectura clara de dónde está parado tu
       proyecto.
     </p>
     <a href="#form" class="btn-primary">
@@ -293,7 +605,7 @@
   </section>
 
   <footer class="lp-footer">
-    <p class="lp-footer__copy">© 2025 Atenea Agency · Todos los derechos reservados</p>
+    <p class="lp-footer__copy">© 2026 Atenea Agency · Todos los derechos reservados</p>
   </footer>
 
   <a href="https://wa.me/5491169152671" class="wa" target="_blank" rel="noopener noreferrer"

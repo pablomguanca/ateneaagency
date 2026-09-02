@@ -1,0 +1,93 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+.shift {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-5xl v.$side-pad;
+
+  @include m.below-md {
+    padding: v.$space-4xl v.$side-pad;
+  }
+
+  &__header {
+    text-align: center;
+    max-width: 60ch;
+    margin: 0 auto v.$space-4xl;
+  }
+
+  &__header--tight {
+    margin-bottom: v.$space-2xl;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.05;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__intro {
+    font-size: 0.95rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+    margin-top: v.$space-lg;
+  }
+
+  &__stage {
+    max-width: v.$max-width;
+    margin: 0 auto;
+  }
+
+  &__stage-label {
+    @include m.label-text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    margin-bottom: v.$space-2xl;
+    color: v.$color-ivory-dim;
+    text-align: center;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: none;
+      height: 1px;
+      width: clamp(1.5rem, 6vw, 3.5rem);
+      background: currentColor;
+      opacity: 0.35;
+    }
+  }
+
+  &__stage--after &__stage-label {
+    color: v.$color-gold;
+  }
+
+  &__pivot {
+    @include m.flex-center;
+    padding: v.$space-3xl 0;
+    color: rgba(v.$color-gold, 0.5);
+
+    @include m.below-md {
+      padding: v.$space-2xl 0;
+    }
+
+    svg {
+      width: 24px;
+      height: 52px;
+    }
+  }
+}

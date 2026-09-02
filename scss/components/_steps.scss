@@ -118,6 +118,22 @@
   }
 }
 
+.steps--muted {
+  .steps__num {
+    border-color: rgba(v.$color-ivory-dim, 0.32);
+    background: rgba(v.$color-ivory-dim, 0.06);
+    color: v.$color-ivory-dim;
+  }
+
+  .steps__title {
+    color: rgba(v.$color-ivory, 0.82);
+  }
+
+  .steps__arrow {
+    color: rgba(v.$color-ivory-dim, 0.35);
+  }
+}
+
 .reveal.on .steps__item {
   opacity: 1;
   transform: translateY(0);

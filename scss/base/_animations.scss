@@ -48,6 +48,14 @@
     transform: none !important;
   }
 
+  .fx-svg [data-fade] {
+    opacity: 1 !important;
+  }
+
+  .fx-svg [data-draw] {
+    stroke-dashoffset: 0 !important;
+  }
+
   .strip__item {
     --card-scale: 1 !important;
     --card-y: 0px !important;
@@ -61,4 +69,10 @@
   .parallax-scene {
     display: none !important;
   }
+}
+
+// Movimiento continuo de las ilustraciones SVG (ver components/_fx-svg).
+// Todo se resuelve con transform y opacity: no fuerzan relayout ni repintado.
+@keyframes fxPulse {
+  50% { opacity: var(--lo, 0.4); }
 }

@@ -125,17 +125,31 @@
     }
   }
 
+  // Retrato al costado del texto: la foto acompaña, no domina la tarjeta.
   &__card {
     display: flex;
-    flex-direction: column;
-    gap: v.$space-md;
+    align-items: flex-start;
+    gap: v.$space-lg;
+
+    // En mobile el retrato pasa arriba: con la foto al costado el texto queda
+    // en una columna demasiado angosta.
+    @include m.below-md {
+      flex-direction: column;
+      gap: v.$space-md;
+    }
   }
 
   &__media {
+    flex-shrink: 0;
+    width: 132px;
     aspect-ratio: 4 / 5;
     overflow: hidden;
-    border-radius: 1.25rem;
+    border-radius: 1rem;
     border: 1px solid rgba(v.$color-gold, 0.12);
+
+    @include m.below-md {
+      width: 96px;
+    }
   }
 
   &__img {

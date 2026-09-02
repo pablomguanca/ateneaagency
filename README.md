@@ -113,7 +113,8 @@ atenea-agency/
 │   │   ├── _split.scss    ← bloque imagen + texto (reutilizado en home, servicios y nosotros)
 │   │   ├── _forms.scss    ← inputs, labels y validación (home y contacto)
 │   │   ├── _process.scss  ← los 4 pasos + línea de tiempo animada (home y diagnóstico)
-│   │   ├── _steps.scss    ← secuencia numerada con flechas (home y servicios)
+│   │   ├── _steps.scss    ← secuencia numerada con flechas (home, servicios y diagnóstico)
+│   │   ├── _shift.scss    ← bloque "de esto… a esto": dos secuencias de steps contrastadas (servicios y diagnóstico)
 │   │   └── _marquee.scss  ← tira de clientes en loop infinito (markup comentado en index.html)
 │   ├── layout/
 │   │   ├── _hero.scss
@@ -359,14 +360,33 @@ recibe la confirmación. Esto no es opcional:
 - **Tablas para maquetar**, nada de flexbox ni grid: Outlook renderiza con el motor de Word y no los soporta.
 - **Estilos inline únicamente.** Gmail descarta lo que haya en `<head>`, así que una hoja de estilos o un
   bloque `<style>` no llegan.
-- **Sin fuentes web.** Cormorant Garamond y DM Sans no cargan en ningún cliente de correo; la plantilla usa
-  Georgia y Helvetica/Arial, que es lo más parecido disponible.
+- **Fuentes web: solo como mejora progresiva.** Cormorant Garamond se carga con un `<link>` a Google Fonts y la
+  muestran **Apple Mail e iOS Mail**. Gmail, Outlook y Yahoo no soportan `@font-face` y caen a **Georgia**, que
+  es la fallback pensada. El `<link>` va dentro de un comentario condicional `<!--[if !mso]>` para que Outlook
+  ni lo vea: si lo viera, al fallar la carga se iría a Times New Roman en vez de respetar el resto de la pila.
+  El cuerpo del texto queda en Helvetica/Arial a propósito — DM Sans aportaría poco a 15px y las sans del
+  sistema son más legibles en tamaños chicos.
 - **Colores en hex sólido.** `rgba()` no funciona: los tonos translúcidos de la marca ya vienen mezclados a
   mano en la constante `MAIL`.
 - **Sin `border-radius`** (Outlook lo ignora, quedan esquinas rectas) y sin imágenes de fondo.
 - Se manda siempre junto con la versión en **texto plano**, que hay que actualizar en paralelo al HTML.
 
 La firma va como **"Atenea Agency"** a secas, sin nombres propios.
+
+**Para previsualizar sin enviar nada:**
+
+```bash
+node tools/preview-mail.js
+```
+
+Genera los tres mails en `tools/preview/` (con suscripción, sin suscripción y el aviso interno) y los abre en
+el navegador. Reemplaza `fetch` por un stub, así no usa la API key ni gasta envíos. Acepta un nombre para
+probar el saludo (`node tools/preview-mail.js "María Fernández"`) y `--no-open` para solo generar los archivos.
+
+Ojo con la preview: el navegador **sí** carga Cormorant Garamond, así que muestra el mejor caso. Para ver lo
+que rendericen Gmail y Outlook, bloqueá `fonts.googleapis.com` o abrí el archivo sin conexión.
+
+`tools/preview/` está en `.gitignore` y `tools/` en `.vercelignore`, así que nada de esto llega al deploy.
 
 Es un diseño oscuro, acorde al sitio. Algunos clientes (Outlook.com, la app de Gmail en ciertos Android)
 fuerzan su propia inversión en modo oscuro y pueden alterar los colores; no hay forma confiable de evitarlo,

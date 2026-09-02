@@ -1,0 +1,44 @@
+// Ilustraciones SVG inline. Ocupan el contenedor y animan sus piezas cuando el
+// reveal de la sección que las contiene marca `.on`.
+//
+// Convención en el markup:
+//   data-fade  -> entrada con fadeIn
+//   data-draw  -> entrada dibujando el trazo (necesita stroke-dasharray propio)
+//   --d        -> retardo de entrada de esa pieza
+//   --len      -> largo del trazo, para data-draw
+//
+//   data-loop  -> movimiento continuo, ya con la pieza en pantalla
+//   --dur      -> duración del ciclo
+//   --d2       -> retardo del ciclo (para desfasar piezas hermanas)
+//
+// La entrada y el loop nunca van sobre el mismo elemento: el data-loop se anida
+// dentro del grupo que hace data-fade. Así no compiten por la misma propiedad y
+// la opacidad del loop se multiplica por la de la entrada.
+.fx-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  [data-fade] {
+    opacity: 0;
+  }
+
+  [data-draw] {
+    stroke-dashoffset: var(--len, 40);
+  }
+}
+
+.reveal.on .fx-svg {
+  [data-fade] {
+    animation: fadeIn 0.55s ease var(--d, 0s) forwards;
+  }
+
+  [data-draw] {
+    animation: drawLine 0.5s ease var(--d, 0s) forwards;
+  }
+
+  // Latido de opacidad: glows y piezas que "respiran".
+  [data-loop='pulse'] {
+    animation: fxPulse var(--dur, 4s) ease-in-out var(--d2, 0s) infinite;
+  }
+}

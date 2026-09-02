@@ -29,7 +29,6 @@ const BREVO_CONTACTS_ENDPOINT = 'https://api.brevo.com/v3/contacts';
 const DEFAULT_TO = 'atenea.agency.1@gmail.com';
 const DEFAULT_FROM = 'Atenea Agency <onboarding@resend.dev>';
 
-// Se acepta solo lo que conocemos; cualquier otro campo del body se descarta.
 const FIELDS = {
   nombre: { label: 'Nombre', max: 120 },
   email: { label: 'Email', max: 160 },
@@ -43,14 +42,6 @@ const FIELDS = {
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
 const PHONE_RE = /^\+?[0-9]{8,15}$/;
 
-// Freno básico por IP. Es best-effort: cada instancia serverless tiene su
-// propia memoria, así que no reemplaza a un rate limit real, pero corta
-// los envíos repetidos que caen en la misma instancia tibia.
-//
-// Solo cuenta los envíos que salieron: si contara también los rechazos por
-// validación, alguien que se equivoca tres veces al tipear su mail quedaría
-// bloqueado. Y si no se puede identificar la IP no se aplica el freno, para
-// no meter a todo el tráfico en un mismo balde compartido.
 const RATE_LIMIT = { max: 5, windowMs: 10 * 60 * 1000 };
 const hits = new Map();
 
@@ -84,8 +75,6 @@ function text(value, max) {
   return value.replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
-// El checkbox desmarcado ni siquiera viaja en el FormData, así que basta con
-// reconocer las formas afirmativas que puede tomar cuando sí viene.
 function optedIn(value) {
   return ['si', 'sí', 'yes', 'true', 'on', '1'].includes(String(value).toLowerCase());
 }
@@ -99,14 +88,6 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
-/**
- * Alta en la lista de Brevo. `updateEnabled` evita el 409 cuando alguien que
- * ya está en la lista vuelve a consultar: en vez de fallar, actualiza.
- *
- * Los atributos tienen que existir antes en Brevo (Contactos → Configuración
- * → Atributos). Si falta alguno, la API devuelve 400 y el detalle queda en
- * el log de la función.
- */
 async function subscribeToBrevo(data, origen) {
   const apiKey = process.env.BREVO_API_KEY;
   const listId = Number(process.env.BREVO_LIST_ID);
@@ -143,8 +124,6 @@ async function subscribeToBrevo(data, origen) {
   return true;
 }
 
-// Paleta del sitio, en hex sólido. En mail no sirve rgba(): Outlook la
-// ignora, así que los tonos "translúcidos" ya vienen mezclados a mano.
 const MAIL = {
   fondo: '#06060A',
   tarjeta: '#0E0E18',
@@ -156,18 +135,18 @@ const MAIL = {
   marfilTenue: '#9E9688'
 };
 
-const SERIF = "Georgia,'Times New Roman',Times,serif";
+const SERIF = "'Cormorant Garamond',Georgia,'Times New Roman',Times,serif";
 const SANS = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 
-/**
- * Plantilla del mail al interesado.
- *
- * Está escrita con tablas y estilos inline a propósito: Gmail descarta lo
- * que haya en <head>, Outlook renderiza con el motor de Word (sin flexbox,
- * sin grid y sin border-radius) y ningún cliente carga fuentes web. Por eso
- * Cormorant y DM Sans se reemplazan por Georgia y Helvetica/Arial, que es
- * lo más cerca que se puede estar de la identidad del sitio.
- */
+const FONT_LINK = `<!--[if !mso]><!-->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&display=swap" rel="stylesheet">
+<!--<![endif]-->
+<!--[if mso]>
+<style>
+  .serif-brand { font-family: Georgia, 'Times New Roman', Times, serif !important; }
+</style>
+<![endif]-->`;
+
 function welcomeTemplate(nombre, suscripto) {
   const parrafos = [
     'Recibimos tu consulta y ya la estamos leyendo.',
@@ -191,23 +170,22 @@ function welcomeTemplate(nombre, suscripto) {
   const parrafoHtml = txt =>
     `<p style="margin:0 0 14px;font-family:${SANS};font-size:15px;line-height:1.75;color:${MAIL.marfilTenue}">${escapeHtml(txt)}</p>`;
 
-  // Bloque de la lista: solo aparece si el alta se concretó de verdad.
   const bloqueLista = suscripto
     ? `<tr>
-         <td style="padding:8px 32px 0">
-           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-                  style="background-color:${MAIL.panel};border-left:3px solid ${MAIL.oro}">
-             <tr>
-               <td style="padding:16px 20px">
-                 <p style="margin:0 0 6px;font-family:${SANS};font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:${MAIL.oro}">Novedades</p>
-                 <p style="margin:0;font-family:${SANS};font-size:14px;line-height:1.65;color:${MAIL.marfilTenue}">
-                   Te sumamos a nuestra lista de contenido sobre marketing inmobiliario. Si preferís no recibirla, respondé este mail y te damos de baja.
-                 </p>
-               </td>
-             </tr>
-           </table>
-         </td>
-       </tr>`
+          <td style="padding:8px 32px 0">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                    style="background-color:${MAIL.panel};border-left:3px solid ${MAIL.oro}">
+              <tr>
+                <td style="padding:16px 20px">
+                  <p style="margin:0 0 6px;font-family:${SANS};font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:${MAIL.oro}">Novedades</p>
+                  <p style="margin:0;font-family:${SANS};font-size:14px;line-height:1.65;color:${MAIL.marfilTenue}">
+                    Te sumamos a nuestra lista de contenido sobre marketing inmobiliario. Si preferís no recibirla, respondé este mail y te damos de baja.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>`
     : '';
 
   const html = `<!DOCTYPE html>
@@ -216,6 +194,7 @@ function welcomeTemplate(nombre, suscripto) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Recibimos tu consulta</title>
+${FONT_LINK}
 </head>
 <body style="margin:0;padding:0;background-color:${MAIL.fondo}">
 
@@ -229,12 +208,12 @@ function welcomeTemplate(nombre, suscripto) {
     <td align="center" style="padding:32px 12px">
 
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
-             style="width:100%;max-width:600px;background-color:${MAIL.tarjeta};border:1px solid ${MAIL.borde}">
+            style="width:100%;max-width:600px;background-color:${MAIL.tarjeta};border:1px solid ${MAIL.borde}">
 
         <tr>
           <td align="center" style="padding:38px 32px 0">
-            <div style="font-family:${SERIF};font-size:23px;letter-spacing:1px;color:${MAIL.marfil}">
-              Atenea <span style="color:${MAIL.oro};font-style:italic">Agency</span>
+            <div class="serif-brand" style="font-family:${SERIF};font-size:23px;letter-spacing:1px;color:${MAIL.marfil}">
+              Atenea <span style="color:${MAIL.oro}">Agency</span>
             </div>
           </td>
         </tr>
@@ -249,7 +228,7 @@ function welcomeTemplate(nombre, suscripto) {
 
         <tr>
           <td style="padding:30px 32px 0">
-            <h1 style="margin:0 0 18px;font-family:${SERIF};font-size:27px;line-height:1.3;font-weight:normal;color:${MAIL.marfil}">
+            <h1 class="serif-brand" style="margin:0 0 18px;font-family:${SERIF};font-size:27px;line-height:1.3;font-weight:normal;color:${MAIL.marfil}">
               Hola ${escapeHtml(nombre)},<br>gracias por escribirnos.
             </h1>
             ${parrafos.map(parrafoHtml).join('')}
@@ -266,7 +245,7 @@ function welcomeTemplate(nombre, suscripto) {
 
         <tr>
           <td style="padding:22px 32px 38px">
-            <p style="margin:0 0 4px;font-family:${SERIF};font-size:17px;color:${MAIL.marfil}">Atenea Agency</p>
+            <p class="serif-brand" style="margin:0 0 4px;font-family:${SERIF};font-size:17px;color:${MAIL.marfil}">Atenea Agency</p>
             <p style="margin:0 0 12px;font-family:${SANS};font-size:13px;line-height:1.6;color:${MAIL.marfilTenue}">
               Marketing inmobiliario para desarrollos e inmobiliarias
             </p>
@@ -335,8 +314,6 @@ module.exports = async (req, res) => {
 
   const body = typeof req.body === 'object' && req.body ? req.body : {};
 
-  // Honeypot: los bots completan todos los campos, incluido este que está
-  // oculto. Se responde 200 para no darles señal de que fueron detectados.
   if (text(body.website, 200)) {
     return res.status(200).json({ ok: true });
   }
@@ -354,8 +331,6 @@ module.exports = async (req, res) => {
     if (value) data[key] = value;
   }
 
-  // El campo `contacto` de la landing de diagnóstico admite mail o teléfono,
-  // así que se resuelve cuál de los dos es antes de validar.
   if (data.contacto) {
     const comoTelefono = data.contacto.replace(/[\s-]/g, '');
 
@@ -366,8 +341,6 @@ module.exports = async (req, res) => {
       if (!data.telefono) data.telefono = comoTelefono;
       delete data.contacto;
     }
-    // Si no es ni una cosa ni la otra se deja crudo: puede ser un Instagram
-    // o un interno, y es preferible que llegue a descartarlo.
   }
 
   const invalid = [];
@@ -409,7 +382,6 @@ module.exports = async (req, res) => {
     html
   };
 
-  // Permite responderle directo al interesado desde la bandeja de entrada.
   if (data.email) payload.reply_to = data.email;
 
   try {
@@ -423,20 +395,14 @@ module.exports = async (req, res) => {
     });
 
     if (!response.ok) {
-      // Se loguea el detalle del proveedor, pero nunca se devuelve al cliente.
       console.error('[contact] Resend respondió', response.status, await response.text());
       return res.status(502).json({ error: 'No pudimos enviar el mensaje.' });
     }
 
     recordHit(ip);
 
-    // A partir de acá el lead ya está a salvo en la bandeja de la agencia.
-    // Todo lo que sigue es secundario y se aísla: si falla, se loguea y el
-    // usuario igual ve la confirmación.
     const quiereSuscribirse = optedIn(body.suscripcion);
 
-    // Refleja el alta que realmente ocurrió, no la intención: si Brevo falla,
-    // el mail de bienvenida no puede decirle que quedó suscripto.
     let suscripto = false;
 
     if (quiereSuscribirse && !data.email) {
