@@ -1,29 +1,117 @@
 @use '../abstracts/variables' as v;
 @use '../abstracts/mixins' as m;
 
+// Botón flotante de WhatsApp. Solo se incluye en index.html y diagnostico.html,
+// las dos páginas donde el visitante está decidiendo si nos escribe.
+// Usa la paleta de la marca (fondo oscuro + oro) en lugar del verde de WhatsApp:
+// el glifo ya identifica el canal y el verde saturado rompía con el resto.
 .wa {
   position: fixed;
-  bottom: 2.5rem;
-  right: 2.5rem;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: v.$color-whatsapp;
-  @include m.flex-center;
-  box-shadow: 0 4px 24px rgba(v.$color-whatsapp, 0.25);
+  right: v.$space-lg;
+  bottom: v.$space-lg;
   z-index: v.$z-wa;
-  transition:
-    transform v.$t-base,
-    box-shadow v.$t-base;
 
-  svg {
-    width: 26px;
-    height: 26px;
-    fill: white;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 999px;
+
+  color: v.$color-gold;
+  background: rgba(v.$color-dark-2, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(v.$color-gold, 0.3);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.45),
+    0 0 22px rgba(v.$color-gold, 0.14);
+
+  transition:
+    color v.$t-base,
+    background v.$t-base,
+    border-color v.$t-base,
+    box-shadow v.$t-base,
+    transform v.$t-base;
+  // Halo: dos anillos que se expanden y desaparecen, con delay alternado para
+  // que siempre haya uno en marcha. Se animan con transform + opacity, así que
+  // no repintan. Al pasar el mouse se apagan: la invitación ya cumplió.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid rgba(v.$color-gold, 0.55);
+    pointer-events: none;
+    opacity: 0;
+    animation: waHalo 3.4s ease-out infinite;
   }
 
-  &:hover {
-    transform: scale(1.12);
-    box-shadow: 0 8px 32px rgba(v.$color-whatsapp, 0.4);
+  &::after {
+    animation-delay: 1.7s;
+  }
+
+  &:hover::before,
+  &:hover::after,
+  &:focus-visible::before,
+  &:focus-visible::after {
+    animation-play-state: paused;
+    opacity: 0;
+  }
+
+  &__icon {
+    flex: 0 0 42px;
+    height: 42px;
+    @include m.flex-center;
+
+    svg {
+      width: 21px;
+      height: 21px;
+      fill: currentColor;
+    }
+  }
+
+  // La etiqueta se despliega al pasar el mouse. En touch no hay hover real,
+  // así que abajo de $bp-md el botón queda siempre circular.
+  &__label {
+    @include m.label-text;
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition:
+      max-width v.$t-slow,
+      opacity v.$t-fast,
+      padding-right v.$t-slow;
+  }
+
+  @include m.below-md {
+    right: v.$space-md;
+    bottom: v.$space-md;
+
+    &__label {
+      display: none;
+    }
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: v.$color-dark;
+    background: v.$color-gold;
+    border-color: v.$color-gold;
+    box-shadow: 0 14px 36px rgba(v.$color-gold, 0.28);
+    transform: translateY(-2px);
+  }
+
+  @include m.md {
+    &:hover .wa__label,
+    &:focus-visible .wa__label {
+      max-width: 10rem;
+      padding-right: 0.9rem;
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: 1px solid rgba(v.$color-gold, 0.55);
+    outline-offset: 3px;
   }
 }

@@ -76,3 +76,11 @@
 @keyframes fxPulse {
   50% { opacity: var(--lo, 0.4); }
 }
+
+// Halo que late alrededor del botón de WhatsApp (ver components/_whatsapp).
+// Dos anillos con delay alternado dan una señal continua pero pausada.
+@keyframes waHalo {
+  0%   { opacity: 0.45; transform: scale(1); }
+  70%  { opacity: 0;    transform: scale(1.5); }
+  100% { opacity: 0;    transform: scale(1.5); }
+}
