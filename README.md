@@ -48,6 +48,13 @@ diferencia: hablan de él o de su situación, no de nosotros.
 Atenea; "si respondés tarde, el lead ya está frío" está escrito desde quien sufre el problema. El segundo es
 el registro correcto.
 
+**Los socios se nombran en un solo lugar: las tarjetas del equipo en `nosotros.html`** (y el `founder` del
+JSON-LD, que es dato estructurado). Fuera de ahí no se repite "somos Pablo y Carolina", "somos dos", "los dos"
+ni "dos socios": convierte el tamaño del equipo en el argumento de venta, cuando el argumento real es la
+dedicación —pocos proyectos a la vez— y la continuidad —quien define la estrategia es quien la ejecuta y la
+mide—. Eso se dice sin contar cabezas. Tampoco volver a la fórmula "el que te arma la estrategia es el mismo
+que atiende el teléfono": suena a agencia chica justificándose.
+
 ### Servicios que ofrece la agencia
 Desarrollo web a medida · Landing pages de captación · Gestión de redes sociales (Instagram, Facebook, TikTok) ·
 Campañas de pauta (Meta Ads, Google Ads) · Email marketing y nutrición de leads · Identidad de marca y diseño.
