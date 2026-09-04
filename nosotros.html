@@ -157,10 +157,175 @@
   </section>
 
   <section class="split split--reverse reveal" aria-labelledby="foco-title">
-    <div class="split__media">
-      <!-- TODO: reemplazar por una imagen propia de obra o desarrollo -->
-      <img class="split__img" src="assets/img/placeholder.svg" alt="Desarrollo inmobiliario en construcción"
-        loading="lazy" decoding="async" width="800" height="600">
+    <div class="split__media split__media--hide-mobile">
+      <svg class="fx-svg" viewBox="0 0 800 600" role="img" preserveAspectRatio="xMidYMid slice"
+        aria-label="El recorrido de una persona: ve tu anuncio y los curiosos quedan filtrados ahí mismo, deja sus datos en la landing, te busca en tu sitio y tus redes antes de decidir, recibe tus emails y llega como lead calificado a tu equipo comercial">
+        <title>De la primera visita al lead calificado</title>
+
+        <defs>
+          <radialGradient id="rutaGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.1" />
+            <stop offset="60%" stop-color="#C9A84C" stop-opacity="0.028" />
+            <stop offset="100%" stop-color="#C9A84C" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="rutaNodo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="#C9A84C" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <rect width="800" height="600" fill="#0A0A12" />
+        <g data-fade style="--d:0.9s">
+          <ellipse data-loop="pulse" style="--dur:6s; --d2:1.2s; --lo:0.45" cx="380" cy="300" rx="300" ry="260"
+            fill="url(#rutaGlow)" />
+        </g>
+
+        <g data-fade style="--d:0s">
+          <text x="330" y="42" text-anchor="middle" fill="rgba(158,150,136,0.55)"
+            font-family="'DM Sans', system-ui, sans-serif" font-size="13" font-weight="500" letter-spacing="4">ALGUIEN
+            QUE NO TE CONOCE</text>
+        </g>
+
+        <g class="fx-svg__paso" data-fade style="--d:0.10s">
+          <rect x="190" y="70" width="280" height="82" rx="10" fill="rgba(255,255,255,0.018)"
+            stroke="rgba(255,255,255,0.055)" />
+          <rect x="222" y="87" width="32" height="48" rx="5" fill="#0E0E18" stroke="rgba(240,235,224,0.25)" />
+          <rect x="226" y="94" width="24" height="18" rx="2" fill="rgba(255,255,255,0.05)" />
+          <path d="M229 110 L235 102 L241 110 Z" fill="rgba(240,235,224,0.16)" />
+          <g fill="rgba(240,235,224,0.18)">
+            <rect x="226" y="116" width="18" height="2.5" rx="1.25" />
+            <rect x="226" y="121" width="12" height="2.5" rx="1.25" />
+          </g>
+          <rect x="226" y="126" width="24" height="5" rx="2.5" fill="rgba(201,168,76,0.5)" />
+          <text x="278" y="117" fill="rgba(240,235,224,0.85)" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="17" font-weight="400">Ve tu anuncio</text>
+        </g>
+
+        <g class="fx-svg__descartes" data-fade style="--d:0.22s">
+          <g fill="rgba(158,150,136,0.3)">
+            <circle cx="486" cy="104" r="2" />
+            <circle cx="500" cy="110" r="1.8" />
+            <circle cx="514" cy="116" r="1.6" />
+          </g>
+          <g fill="none" stroke="rgba(158,150,136,0.35)" stroke-width="1.4" stroke-linecap="round">
+            <path d="M524.5 118.5 L535.5 129.5 M535.5 118.5 L524.5 129.5" />
+            <path d="M551 129 L561 139 M561 129 L551 139" />
+          </g>
+          <text x="576" y="130" fill="rgba(158,150,136,0.6)" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="12.5" font-weight="500" letter-spacing="1.7">FILTRAMOS CURIOSOS</text>
+        </g>
+
+        <g data-fade style="--d:0.30s" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1.3"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M330 152 V176" />
+          <path d="M325.5 171.5 L330 176 L334.5 171.5" />
+        </g>
+
+        <g class="fx-svg__paso" data-fade style="--d:0.40s">
+          <rect x="190" y="186" width="280" height="82" rx="10" fill="rgba(255,255,255,0.018)"
+            stroke="rgba(255,255,255,0.055)" />
+          <rect x="218" y="201" width="40" height="52" rx="4" fill="#0E0E18" stroke="rgba(240,235,224,0.25)" />
+          <g fill="none" stroke="rgba(240,235,224,0.2)">
+            <rect x="224" y="209" width="28" height="9" rx="2" />
+            <rect x="224" y="222" width="28" height="9" rx="2" />
+          </g>
+          <rect x="224" y="237" width="28" height="9" rx="4.5" fill="rgba(201,168,76,0.55)" />
+          <text x="278" y="233" fill="rgba(240,235,224,0.85)" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="17" font-weight="400">Deja los datos</text>
+        </g>
+
+        <g data-fade style="--d:0.56s" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <g stroke="rgba(201,168,76,0.5)">
+            <path d="M476 222 H512" />
+            <path d="M507.5 217.5 L512 222 L507.5 226.5" />
+          </g>
+          <g stroke="rgba(158,150,136,0.4)">
+            <path d="M514 246 H478" />
+            <path d="M482.5 241.5 L478 246 L482.5 250.5" />
+          </g>
+        </g>
+
+        <g class="fx-svg__chequeo" data-fade style="--d:0.64s">
+          <text x="520" y="186" fill="rgba(158,150,136,0.6)" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="12.5" font-weight="500" letter-spacing="1.7">MIENTRAS DECIDE, TE BUSCA</text>
+          <rect x="520" y="196" width="220" height="76" rx="10" fill="rgba(255,255,255,0.018)"
+            stroke="rgba(255,255,255,0.055)" />
+          <rect x="572" y="214" width="60" height="40" rx="4" fill="#0E0E18" stroke="rgba(240,235,224,0.25)" />
+          <path d="M572 224 H632" stroke="rgba(240,235,224,0.18)" />
+          <g fill="rgba(201,168,76,0.45)">
+            <circle cx="579" cy="219" r="1.8" />
+            <circle cx="586" cy="219" r="1.8" />
+            <circle cx="593" cy="219" r="1.8" />
+          </g>
+          <g fill="rgba(240,235,224,0.2)">
+            <rect x="578" y="230" width="34" height="3.5" rx="1.75" />
+            <rect x="578" y="237" width="22" height="3.5" rx="1.75" />
+          </g>
+          <rect x="648" y="214" width="40" height="40" rx="8" fill="#0E0E18" stroke="rgba(240,235,224,0.25)" />
+          <circle cx="658" cy="226" r="4.5" fill="none" stroke="rgba(240,235,224,0.3)" />
+          <g fill="rgba(240,235,224,0.2)">
+            <rect x="652" y="236" width="32" height="3.5" rx="1.75" />
+            <rect x="652" y="243" width="20" height="3.5" rx="1.75" />
+          </g>
+          <text x="630" y="298" text-anchor="middle" fill="#C9A84C" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="14" font-weight="500" letter-spacing="3">BASE</text>
+          <text x="630" y="318" text-anchor="middle" fill="rgba(158,150,136,0.6)"
+            font-family="'DM Sans', system-ui, sans-serif" font-size="13" font-weight="300">tu sitio + tus redes</text>
+        </g>
+
+        <g data-fade style="--d:0.86s" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1.3"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M330 268 V292" />
+          <path d="M325.5 287.5 L330 292 L334.5 287.5" />
+        </g>
+
+        <g class="fx-svg__paso" data-fade style="--d:0.94s">
+          <rect x="190" y="304" width="280" height="82" rx="10" fill="rgba(255,255,255,0.018)"
+            stroke="rgba(255,255,255,0.055)" />
+          <rect x="222" y="321" width="44" height="30" rx="3" fill="#0E0E18" stroke="rgba(240,235,224,0.12)" />
+          <rect x="219" y="325" width="44" height="30" rx="3" fill="#0E0E18" stroke="rgba(240,235,224,0.18)" />
+          <rect x="216" y="329" width="44" height="30" rx="3" fill="#0E0E18" stroke="rgba(240,235,224,0.28)" />
+          <path d="M216 332 L238 347 L260 332" fill="none" stroke="rgba(240,235,224,0.28)" />
+          <text x="278" y="351" fill="rgba(240,235,224,0.85)" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="17" font-weight="400">Recibe tus emails</text>
+        </g>
+
+        <g class="fx-svg__piezas" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1.2">
+          <g data-fade style="--d:0.76s">
+            <path d="M178 70 H166 V268 H178" />
+            <text x="154" y="174" text-anchor="end" fill="#C9A84C" font-family="'DM Sans', system-ui, sans-serif"
+              font-size="14" font-weight="500" letter-spacing="3" stroke="none">CAPTACIÓN</text>
+          </g>
+          <g data-fade style="--d:1.06s">
+            <path d="M178 304 H166 V386 H178" />
+            <text x="154" y="350" text-anchor="end" fill="#C9A84C" font-family="'DM Sans', system-ui, sans-serif"
+              font-size="14" font-weight="500" letter-spacing="3" stroke="none">NUTRICIÓN</text>
+          </g>
+        </g>
+
+        <g data-fade style="--d:1.08s" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1.3"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M330 386 V422" />
+          <path d="M325.5 417.5 L330 422 L334.5 417.5" />
+        </g>
+
+        <g data-fade style="--d:1.16s">
+          <ellipse data-loop="pulse" style="--dur:4.4s; --d2:1.8s; --lo:0.35" cx="330" cy="452" rx="130" ry="96"
+            fill="url(#rutaNodo)" />
+        </g>
+        <g data-fade style="--d:1.22s">
+          <circle cx="330" cy="452" r="20" fill="rgba(201,168,76,0.06)" stroke="#C9A84C" stroke-width="1.4" />
+          <path d="M320 452 L327 459 L341 444" fill="none" stroke="#C9A84C" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </g>
+        <g data-fade style="--d:1.34s">
+          <text x="330" y="508" text-anchor="middle" fill="#C9A84C" font-family="'DM Sans', system-ui, sans-serif"
+            font-size="15" font-weight="500" letter-spacing="4.5">LEAD CALIFICADO</text>
+          <text x="330" y="532" text-anchor="middle" fill="rgba(158,150,136,0.6)"
+            font-family="'DM Sans', system-ui, sans-serif" font-size="13.5" font-weight="300">listo para tu equipo
+            comercial</text>
+        </g>
+      </svg>
     </div>
     <div class="split__text">
       <p class="split__label">Así funciona</p>
@@ -197,7 +362,8 @@
           </svg>
         </div>
         <h3 class="philosophy__item-title">Diagnóstico</h3>
-        <p class="philosophy__item-desc">El pirmer paso es el análisis real de tu proyecto: si es una propiedad puntual o un desarrollo completo, tu perfil decliente ideal, y en qué momento de venta está hoy.</p>
+        <p class="philosophy__item-desc">El pirmer paso es el análisis real de tu proyecto: si es una propiedad puntual
+          o un desarrollo completo, tu perfil decliente ideal, y en qué momento de venta está hoy.</p>
       </article>
       <article class="philosophy__item">
         <div class="philosophy__icon" aria-hidden="true">
@@ -209,7 +375,8 @@
           </svg>
         </div>
         <h3 class="philosophy__item-title">Implementación del Sistema</h3>
-        <p class="philosophy__item-desc">Con esa estructura, activamos el Sistema de Adquisición: sitio web, redes sociales, anuncios bien estructurados para captar leads calificados y empezar a nutrirlos.</p>
+        <p class="philosophy__item-desc">Con esa estructura, activamos el Sistema de Adquisición: sitio web, redes
+          sociales, anuncios bien estructurados para captar leads calificados y empezar a nutrirlos.</p>
       </article>
       <article class="philosophy__item">
         <div class="philosophy__icon" aria-hidden="true">
@@ -220,7 +387,8 @@
           </svg>
         </div>
         <h3 class="philosophy__item-title">Seguimiento y Reporting</h3>
-        <p class="philosophy__item-desc">Medimos cuántas consultas entran, de qué campaña y a qué costo. Números claros para que puedas tener una visión completa del proceso.</p>
+        <p class="philosophy__item-desc">Medimos cuántas consultas entran, de qué campaña y a qué costo. Números claros
+          para que puedas tener una visión completa del proceso.</p>
       </article>
       <article class="philosophy__item">
         <div class="philosophy__icon" aria-hidden="true">
@@ -233,12 +401,14 @@
           </svg>
         </div>
         <h3 class="philosophy__item-title">Ajuste Continuo</h3>
-        <p class="philosophy__item-desc">Analizamos los rendimientos y tomamos decisiones: potenciamos lo que funciona, descartamos lo que no, y lo sostenemos mientras siga en venta para que solamente tu equipo se concentre en cerrar.</p>
+        <p class="philosophy__item-desc">Analizamos los rendimientos y tomamos decisiones: potenciamos lo que funciona,
+          descartamos lo que no, y lo sostenemos mientras siga en venta para que solamente tu equipo se concentre en
+          cerrar.</p>
       </article>
     </div>
   </section>
 
-  <!-- <section class="team reveal" aria-labelledby="team-title">
+  <section class="team reveal" aria-labelledby="team-title">
     <div class="team__header">
       <p class="team__label">Quiénes fundamos Atenea</p>
       <h2 class="team__title" id="team-title">Los <em>co-founders</em><br>de Atenea</h2>
@@ -252,7 +422,10 @@
         <div class="team__info">
           <h3 class="team__name">Caro Guerrero</h3>
           <p class="team__role">Co-founder de Atenea</p>
-          <p class="team__bio">Dedicada, creativa y detallista. Caro empezó como freelancer ayudando a pequeñas marcas a destacar su presencia en redes sociales como Community Manager y Publicista Digital. </p>
+          <p class="team__bio">Creativa, hiper-organizada y dedicada. Formada en Marketing Digital, Caro empezó como
+            freelancer ayudando a pequeñas marcas a destacar su presencia creando estrategias de contenido potentes en
+            redes sociales como Community
+            Manager y Publicista Digital.</p>
         </div>
       </article>
       <article class="team__card">
@@ -263,24 +436,34 @@
         <div class="team__info">
           <h3 class="team__name">Pablo Martín</h3>
           <p class="team__role">Co-founder de Atenea</p>
-          <p class="team__bio">Minucioso, obsesivo y </p>
+          <p class="team__bio">Minucioso, obsesivo y workaholic. Formado en Marketing Digital y Programación, Pablo
+            también empezó como freelancer ayudando a Pymes y profesionales independientes a activar su presencia
+            digital con páginas web de alta conversión.</p>
         </div>
       </article>
     </div>
-  </section> -->
+    <div class="team__closing">
+      <p class="team__closing-body">
+        Cada uno venía haciendo la mitad del trabajo por separado: Caro construyendo la marca y la presencia; Pablo,
+        los sitios donde esa presencia se convierte en consultas. Trabajando juntos entendimos que ninguna de las dos
+        funciona sola, y que un desarrollo no necesita cinco proveedores sueltos: necesita un sistema.
+      </p>
+      <p class="team__closing-line">Atenea es chica <em>a propósito</em>: el que te atiende es el mismo que hace el
+        trabajo.</p>
+    </div>
+  </section>
 
   <section class="manifesto reveal" aria-label="Filosofía">
     <div class="manifesto__bg" aria-hidden="true"></div>
     <div class="manifesto__content">
       <p class="manifesto__quote">
-        Marketing <strong>inmobiliario</strong><br> 
-
+        Un <strong>Sistema de Adquisición</strong><br>para inmobiliarias y desarrolladoras.
       </p>
       <p class="manifesto__sub">
-        Estrategia primero, ejecución después. Así encaramos cada proyecto que tomamos.
+
       </p>
       <a href="servicios.html" class="btn-outline">
-        Ver nuestros servicios
+        Conocer el Sistema
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M5 12h14M12 5l7 7-7 7" />
@@ -288,18 +471,6 @@
       </a>
     </div>
   </section>
-
-  <section class="finale reveal" aria-label="Contacto">
-    <div class="finale__left">
-      <p class="finale__eyebrow">¿Tenés un proyecto en marcha?</p>
-      <h2 class="finale__title">Empecemos por<br>el diagnóstico.</h2>
-    </div>
-    <div class="finale__right">
-      <a href="contacto.html" class="btn-dark">Coordinar la llamada</a>
-      <a href="servicios.html" class="btn-dark-outline">Ver servicios</a>
-    </div>
-  </section>
-
   <footer class="footer">
     <div class="footer__logo"><img class="logo-icon" src="assets/img/logo/logo_mark.png" alt="" width="512"
         height="512">Atenea<em>Agency</em></div>

@@ -175,4 +175,46 @@
     color: v.$color-ivory-dim;
     line-height: 1.8;
   }
+
+  // Cierre de la sección: las dos biografías corren en paralelo y acá se juntan
+  // en una sola idea. Centrado y angosto para que se lea como remate y no como
+  // una tercera tarjeta.
+  &__closing {
+    max-width: 46rem;
+    margin: v.$space-4xl auto 0;
+    text-align: center;
+
+    &::before {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 1px;
+      margin: 0 auto v.$space-xl;
+      background: rgba(v.$color-gold, 0.35);
+    }
+
+    @include m.below-md {
+      margin-top: v.$space-3xl;
+    }
+  }
+
+  &__closing-body {
+    font-size: 0.92rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.85;
+  }
+
+  &__closing-line {
+    margin-top: v.$space-md;
+    font-family: v.$font-serif;
+    font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+    font-weight: v.$fw-medium;
+    line-height: 1.35;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
 }
