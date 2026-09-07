@@ -301,3 +301,10 @@ document.querySelectorAll('.js-contact-form').forEach(form => {
     }
   });
 });
+
+// Año del copyright. El HTML trae el año escrito como fallback (para quien
+// entra sin JS y para los crawlers); acá se pisa con el año en curso para que
+// el footer no envejezca solo.
+document.querySelectorAll('.js-year').forEach(el => {
+  el.textContent = new Date().getFullYear();
+});

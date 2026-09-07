@@ -112,43 +112,42 @@
     }
   }
 
+  // Una sola tarjeta: la foto de los dos co-founders y, al costado, el texto.
   &__grid {
-    max-width: v.$max-width;
+    max-width: 62rem;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: v.$space-3xl;
-
-    @include m.below-md {
-      grid-template-columns: 1fr;
-      gap: v.$space-2xl;
-    }
   }
 
-  // Retrato al costado del texto: la foto acompaña, no domina la tarjeta.
+  // Retrato y texto en dos columnas de peso parejo, centrados entre sí para que
+  // ninguno de los dos bloques quede colgando respecto del otro.
   &__card {
     display: flex;
-    align-items: flex-start;
-    gap: v.$space-lg;
+    align-items: center;
+    gap: v.$space-2xl;
 
     // En mobile el retrato pasa arriba: con la foto al costado el texto queda
     // en una columna demasiado angosta.
     @include m.below-md {
       flex-direction: column;
-      gap: v.$space-md;
+      align-items: flex-start;
+      gap: v.$space-lg;
     }
   }
 
   &__media {
     flex-shrink: 0;
-    width: 132px;
+    width: clamp(240px, 32vw, 340px);
     aspect-ratio: 4 / 5;
     overflow: hidden;
     border-radius: 1rem;
     border: 1px solid rgba(v.$color-gold, 0.12);
 
+    // Sin columna al costado la foto puede tomar todo el ancho disponible, pero
+    // se achata para no comerse la pantalla en vertical.
     @include m.below-md {
-      width: 96px;
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 3 / 2;
     }
   }
 
@@ -158,22 +157,34 @@
     object-fit: cover;
   }
 
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
   &__name {
-    font-size: 1.6rem;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    line-height: 1.15;
+
+    em {
+      font-style: italic;
+      font-weight: v.$fw-light;
+      color: v.$color-gold;
+    }
   }
 
   &__role {
     @include m.label-text;
     color: v.$color-gold;
-    margin-top: 0.2rem;
-    margin-bottom: v.$space-sm;
+    margin-top: 0.45rem;
+    margin-bottom: v.$space-md;
   }
 
   &__bio {
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: v.$fw-light;
     color: v.$color-ivory-dim;
-    line-height: 1.8;
+    line-height: 1.85;
   }
 
   // Cierre de la sección: las dos biografías corren en paralelo y acá se juntan
@@ -183,6 +194,7 @@
     max-width: 46rem;
     margin: v.$space-4xl auto 0;
     text-align: center;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(v.$color-gold, 0.04) 0%, transparent 100%);
 
     &::before {
       content: '';
@@ -198,11 +210,46 @@
     }
   }
 
+  // Titula el remate. Va un escalón por debajo de &__title para que no compita
+  // con el encabezado de la sección, y en peso liviano para que el <strong>
+  // dorado sea lo único que levanta la vista.
+  &__closing-title {
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+    font-weight: v.$fw-light;
+    line-height: 1.15;
+    margin-bottom: v.$space-lg;
+
+    strong {
+      font-weight: v.$fw-bold;
+      color: v.$color-gold;
+    }
+
+    @include m.below-md {
+      margin-bottom: v.$space-md;
+
+      // El salto manual está pensado para desktop: en mobile parte la frase en
+      // dos líneas demasiado cortas.
+      br {
+        display: none;
+      }
+    }
+  }
+
   &__closing-body {
+    max-width: 38rem;
+    margin: 0 auto;
     font-size: 0.92rem;
     font-weight: v.$fw-light;
     color: v.$color-ivory-dim;
     line-height: 1.85;
+    text-wrap: pretty;
+  }
+
+  // El CTA cierra el bloque en el mismo eje centrado que el título y el párrafo.
+  // La distancia es corta a propósito: tiene que leerse como el paso siguiente
+  // de lo que se acaba de decir, no como una banda aparte.
+  &__closing-cta {
+    margin-top: v.$space-xl;
   }
 
   &__closing-line {

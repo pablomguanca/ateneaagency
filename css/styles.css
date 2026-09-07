@@ -2318,32 +2318,24 @@ p {
   color: #C9A84C;
 }
 .team__grid {
-  max-width: 1200px;
+  max-width: 62rem;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-}
-@media (max-width: 899px) {
-  .team__grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
 }
 .team__card {
   display: flex;
-  align-items: flex-start;
-  gap: 2rem;
+  align-items: center;
+  gap: 3rem;
 }
 @media (max-width: 899px) {
   .team__card {
     flex-direction: column;
-    gap: 1.5rem;
+    align-items: flex-start;
+    gap: 2rem;
   }
 }
 .team__media {
   flex-shrink: 0;
-  width: 132px;
+  width: clamp(240px, 32vw, 340px);
   aspect-ratio: 4/5;
   overflow: hidden;
   border-radius: 1rem;
@@ -2351,7 +2343,9 @@ p {
 }
 @media (max-width: 899px) {
   .team__media {
-    width: 96px;
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 3/2;
   }
 }
 .team__img {
@@ -2359,8 +2353,18 @@ p {
   height: 100%;
   object-fit: cover;
 }
+.team__info {
+  flex: 1;
+  min-width: 0;
+}
 .team__name {
-  font-size: 1.6rem;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  line-height: 1.15;
+}
+.team__name em {
+  font-style: italic;
+  font-weight: 300;
+  color: #C9A84C;
 }
 .team__role {
   font-size: 0.7rem;
@@ -2368,19 +2372,20 @@ p {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #C9A84C;
-  margin-top: 0.2rem;
-  margin-bottom: 1rem;
+  margin-top: 0.45rem;
+  margin-bottom: 1.5rem;
 }
 .team__bio {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 300;
   color: #9E9688;
-  line-height: 1.8;
+  line-height: 1.85;
 }
 .team__closing {
   max-width: 46rem;
   margin: 5rem auto 0;
   text-align: center;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(201, 168, 76, 0.04) 0%, transparent 100%);
 }
 .team__closing::before {
   content: "";
@@ -2395,11 +2400,35 @@ p {
     margin-top: 4rem;
   }
 }
+.team__closing-title {
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 2rem;
+}
+.team__closing-title strong {
+  font-weight: 700;
+  color: #C9A84C;
+}
+@media (max-width: 899px) {
+  .team__closing-title {
+    margin-bottom: 1.5rem;
+  }
+  .team__closing-title br {
+    display: none;
+  }
+}
 .team__closing-body {
+  max-width: 38rem;
+  margin: 0 auto;
   font-size: 0.92rem;
   font-weight: 300;
   color: #9E9688;
   line-height: 1.85;
+  text-wrap: pretty;
+}
+.team__closing-cta {
+  margin-top: 2.5rem;
 }
 .team__closing-line {
   margin-top: 1.5rem;
@@ -2724,3 +2753,5 @@ p {
   color: #9E9688;
   letter-spacing: 0.06em;
 }
+
+/*# sourceMappingURL=styles.css.map */
