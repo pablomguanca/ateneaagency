@@ -136,7 +136,7 @@
 
   &__media {
     flex-shrink: 0;
-    width: clamp(240px, 32vw, 340px);
+    width: clamp(260px, 34vw, 380px);
     aspect-ratio: 4 / 5;
     overflow: hidden;
     border-radius: 1rem;
@@ -157,27 +157,33 @@
     object-fit: cover;
   }
 
+  // Ritmo vertical del bloque de texto: sin esto los cuatro párrafos se leen
+  // como un solo muro parejo.
   &__info {
     flex: 1;
     min-width: 0;
-  }
 
-  &__name {
-    font-size: clamp(1.6rem, 3vw, 2.1rem);
-    line-height: 1.15;
-
-    em {
-      font-style: italic;
-      font-weight: v.$fw-light;
-      color: v.$color-gold;
+    > * + * {
+      margin-top: v.$space-md;
     }
   }
 
   &__role {
     @include m.label-text;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
     color: v.$color-gold;
-    margin-top: 0.45rem;
-    margin-bottom: v.$space-md;
+
+    // Con el <h3> del nombre fuera, el rótulo es lo único que ancla el bloque:
+    // la regla dorada le da el peso que perdió.
+    &::before {
+      content: '';
+      flex-shrink: 0;
+      width: 32px;
+      height: 1px;
+      background: rgba(v.$color-gold, 0.5);
+    }
   }
 
   &__bio {
@@ -185,6 +191,25 @@
     font-weight: v.$fw-light;
     color: v.$color-ivory-dim;
     line-height: 1.85;
+  }
+
+  // Los dos perfiles individuales son un aparte dentro del texto: la regla
+  // dorada al costado los agrupa y los despega del primer párrafo y del cierre.
+  &__duo {
+    display: grid;
+    gap: v.$space-sm;
+    padding-left: v.$space-md;
+    border-left: 1px solid rgba(v.$color-gold, 0.28);
+
+    @include m.below-md {
+      padding-left: v.$space-sm;
+    }
+  }
+
+  &__who strong {
+    color: v.$color-gold-bright;
+    font-weight: v.$fw-semibold;
+    letter-spacing: 0.01em;
   }
 
   // Cierre de la sección: las dos biografías corren en paralelo y acá se juntan
