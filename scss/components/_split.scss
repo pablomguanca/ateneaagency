@@ -23,6 +23,14 @@
     @include m.below-md {
       order: -1;
     }
+
+    // Ilustraciones que en mobile deben leerse después del texto que las
+    // explica, no antes (si no, el gráfico aparece sin contexto).
+    &.split__media--mobile-last {
+      @include m.below-md {
+        order: 3;
+      }
+    }
   }
 
   &__media {
