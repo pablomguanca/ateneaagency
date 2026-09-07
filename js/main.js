@@ -302,6 +302,216 @@ document.querySelectorAll('.js-contact-form').forEach(form => {
   });
 });
 
+// Gate de captura de la landing de diagnóstico: pide un email y a cambio
+// despliega el checklist que devuelve /api/save-lead.
+//
+// Veredictos del envío. Solo RECHAZO le cierra la puerta al visitante: es el
+// único caso en que el problema está de su lado y lo puede corregir. Si la
+// falla es nuestra (Brevo caído, Resend sin responder) entra igual, porque
+// dejarlo afuera por una avería propia nos hace perder el lead entero.
+const gateForm = document.getElementById('gate-form');
+
+if (gateForm) {
+  const GATE_OK = 'ok';
+  const GATE_RECHAZO = 'rechazo';
+  const GATE_AVERIA = 'averia';
+
+  const GATE_CACHE = 'atenea_checklist';
+  const GATE_EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/;
+
+  const gateEmail = gateForm.querySelector('#gateEmail');
+  const gateStatus = gateForm.querySelector('.js-gate-status');
+  const gateSubmit = gateForm.querySelector('button[type="submit"]');
+  const gateSubmitLabel = gateSubmit.querySelector('span');
+  const gateVeil = document.getElementById('gate-veil');
+  const gateContent = document.getElementById('gate-content');
+
+  const gateIdleLabel = gateSubmitLabel.textContent;
+
+  // localStorage tira en modo privado y con las cookies bloqueadas. Que no se
+  // pueda recordar el desbloqueo es molesto; que reviente el resto de la página
+  // por eso, no.
+  const leerCache = () => {
+    try {
+      const guardado = localStorage.getItem(GATE_CACHE);
+      const bloques = guardado ? JSON.parse(guardado) : null;
+      return Array.isArray(bloques) && bloques.length ? bloques : null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const guardarCache = bloques => {
+    try {
+      localStorage.setItem(GATE_CACHE, JSON.stringify(bloques));
+    } catch (error) {
+      // Sin persistencia: la próxima visita vuelve a pedir el mail. Es otra
+      // oportunidad de capturarlo, y esta vez la persona ya lo vio igual.
+    }
+  };
+
+  // Se arma con el DOM y no con innerHTML: el texto viene de nuestro backend,
+  // pero construirlo así deja la inyección imposible por definición.
+  const renderChecklist = (bloques, avisoMail) => {
+    const grid = document.createElement('div');
+    grid.className = 'lp-gate__grid';
+
+    bloques.forEach(bloque => {
+      const grupo = document.createElement('article');
+      grupo.className = 'lp-gate__group';
+
+      const titulo = document.createElement('h3');
+      titulo.className = 'lp-gate__group-title';
+      titulo.textContent = bloque.titulo;
+      grupo.appendChild(titulo);
+
+      const lista = document.createElement('ul');
+      lista.className = 'lp-gate__list';
+
+      (bloque.items || []).forEach(texto => {
+        const item = document.createElement('li');
+        item.className = 'lp-gate__item';
+        item.textContent = texto;
+        lista.appendChild(item);
+      });
+
+      grupo.appendChild(lista);
+      grid.appendChild(grupo);
+    });
+
+    const outro = document.createElement('p');
+    outro.className = 'lp-gate__outro';
+
+    // El aviso del mail solo se muestra si el envío salió de verdad: prometerle
+    // un mail que no llegó es peor que no mencionarlo.
+    if (avisoMail) {
+      const enviado = document.createElement('strong');
+      enviado.textContent = avisoMail;
+      outro.appendChild(enviado);
+      outro.appendChild(document.createElement('br'));
+    }
+
+    outro.insertAdjacentHTML(
+      'beforeend',
+      'Si querés que lo revisemos con vos y te devolvamos una lectura concreta de tu proyecto, ' +
+        '<a href="#form">pedí el diagnóstico sin cargo</a>.'
+    );
+
+    gateContent.replaceChildren(grid, outro);
+    gateContent.hidden = false;
+
+    if (gateVeil) gateVeil.hidden = true;
+    gateForm.hidden = true;
+  };
+
+  const cacheado = leerCache();
+
+  if (cacheado) {
+    renderChecklist(cacheado);
+  } else {
+    const enviarLead = async email => {
+      const response = await fetch('/api/save-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          website: gateForm.querySelector('#gateWeb').value,
+          source: 'diagnostico-checklist'
+        })
+      });
+
+      // Rechazo: el dato está mal o hubo demasiados intentos. Corregible.
+      if (response.status === 400 || response.status === 403 || response.status === 429) {
+        const data = await response.json().catch(() => ({}));
+        return { veredicto: GATE_RECHAZO, error: data.error };
+      }
+
+      if (!response.ok) return { veredicto: GATE_AVERIA };
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!data.ok || !Array.isArray(data.checklist) || !data.checklist.length) {
+        return { veredicto: GATE_AVERIA };
+      }
+
+      // El backend responde 200 con saved:false cuando no pudo guardar el mail
+      // pero igual corresponde dejar entrar.
+      return {
+        veredicto: data.saved === false ? GATE_AVERIA : GATE_OK,
+        checklist: data.checklist,
+        emailSent: data.emailSent !== false
+      };
+    };
+
+    gateForm.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const email = gateEmail.value.trim();
+
+      if (!GATE_EMAIL_RE.test(email)) {
+        gateEmail.setAttribute('aria-invalid', 'true');
+        gateStatus.classList.add('is-error');
+        gateStatus.textContent = 'Ingresá un email válido.';
+        return;
+      }
+
+      gateEmail.setAttribute('aria-invalid', 'false');
+      gateSubmit.disabled = true;
+      gateSubmitLabel.textContent = 'Un segundo...';
+      gateStatus.classList.remove('is-error');
+      gateStatus.textContent = '';
+
+      let resultado;
+
+      try {
+        resultado = await enviarLead(email);
+      } catch (error) {
+        // El endpoint no respondió. Un reintento por si fue algo pasajero.
+        try {
+          resultado = await enviarLead(email);
+        } catch (segundoError) {
+          console.error('[gate] No se pudo enviar el email:', segundoError);
+          resultado = { veredicto: GATE_AVERIA };
+        }
+      }
+
+      gateSubmit.disabled = false;
+      gateSubmitLabel.textContent = gateIdleLabel;
+
+      if (resultado.veredicto === GATE_RECHAZO) {
+        gateEmail.setAttribute('aria-invalid', 'true');
+        gateStatus.classList.add('is-error');
+        gateStatus.textContent = resultado.error || 'Revisá tu email y probá de nuevo.';
+        return;
+      }
+
+      // Avería sin contenido: no hay checklist que mostrar, así que lo único
+      // honesto es pedir que reintente.
+      if (!resultado.checklist) {
+        gateStatus.classList.add('is-error');
+        gateStatus.textContent =
+          'No pudimos traer el checklist. Probá de nuevo en un momento o escribinos por WhatsApp.';
+        return;
+      }
+
+      // Solo se recuerda el desbloqueo cuando el mail quedó realmente guardado.
+      // Si hubo avería, la próxima visita vuelve a pedirlo.
+      if (resultado.veredicto === GATE_OK) guardarCache(resultado.checklist);
+
+      renderChecklist(
+        resultado.checklist,
+        resultado.emailSent ? `También te lo mandamos a ${email}.` : ''
+      );
+
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Lead', { content_name: 'Checklist de diagnóstico', status: 'success' });
+      }
+
+      gateContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+}
+
 // Año del copyright. El HTML trae el año escrito como fallback (para quien
 // entra sin JS y para los crawlers); acá se pisa con el año en curso para que
 // el footer no envejezca solo.

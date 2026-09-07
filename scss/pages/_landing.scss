@@ -196,6 +196,217 @@
   }
 }
 
+// Gate de captura de email. Dos estados en el mismo lugar: el velo con el
+// formulario encima, y el checklist real que lo reemplaza al desbloquear.
+.lp-gate {
+  position: relative;
+  z-index: v.$z-content;
+  padding: v.$space-5xl v.$side-pad;
+  background: v.$color-dark;
+
+  @include m.below-md {
+    padding: v.$space-4xl v.$side-pad;
+  }
+
+  &__header {
+    max-width: 760px;
+    margin: 0 auto v.$space-3xl;
+    text-align: center;
+  }
+
+  &__label {
+    @include m.eyebrow;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    font-family: v.$font-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: v.$fw-bold;
+    line-height: 1.05;
+    margin-bottom: v.$space-md;
+
+    em {
+      font-style: italic;
+      color: v.$color-gold;
+    }
+  }
+
+  &__lead {
+    font-size: 0.95rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.75;
+  }
+
+  &__body {
+    position: relative;
+    max-width: v.$max-width;
+    margin: 0 auto;
+  }
+
+  // El formulario va encima del velo, centrado en la mitad superior del bloque.
+  &__form {
+    position: relative;
+    z-index: 2;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  &__note {
+    font-size: 0.75rem;
+    font-weight: v.$fw-light;
+    color: rgba(v.$color-ivory-dim, 0.75);
+    line-height: 1.7;
+  }
+
+  // Velo: barras decorativas, sin texto. Insinúa la forma de lo que viene
+  // después sin fingir contenido que no se puede leer.
+  &__veil {
+    position: relative;
+    margin-top: -#{v.$space-4xl};
+    padding-top: calc(#{v.$space-4xl} + #{v.$space-lg});
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: v.$space-lg;
+    pointer-events: none;
+    user-select: none;
+    filter: blur(5px);
+    opacity: 0.5;
+
+    // Se desvanece hacia abajo para que el bloque no termine en un corte seco.
+    mask-image: linear-gradient(to bottom, transparent 0, #000 38%, #000 62%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 38%, #000 62%, transparent 100%);
+
+    @include m.below-md {
+      grid-template-columns: 1fr;
+      margin-top: -#{v.$space-2xl};
+      padding-top: calc(#{v.$space-2xl} + #{v.$space-lg});
+    }
+  }
+
+  // El candado no se difumina con el resto: es lo único del velo que tiene que
+  // leerse claro, porque explica por qué lo demás no se lee.
+  &__lock {
+    position: absolute;
+    left: 50%;
+    bottom: -1.4rem;
+    transform: translateX(-50%);
+    width: 2.6rem;
+    height: 2.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(v.$color-gold, 0.28);
+    border-radius: 50%;
+    background: v.$color-dark;
+    color: v.$color-gold;
+    filter: blur(0);
+
+    svg {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+  }
+
+  &__veil-block {
+    padding: v.$space-lg;
+    border: 1px solid rgba(v.$color-gold, 0.12);
+    border-left: 3px solid rgba(v.$color-gold, 0.35);
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+
+    span {
+      display: block;
+      height: 0.6rem;
+      border-radius: 0.3rem;
+      background: rgba(v.$color-ivory-dim, 0.22);
+
+      &:first-child {
+        height: 0.9rem;
+        background: rgba(v.$color-gold, 0.3);
+      }
+    }
+  }
+
+  // Checklist desbloqueado: lo inyecta el JS con lo que devuelve /api/save-lead.
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: v.$space-lg;
+    margin-top: v.$space-3xl;
+
+    @include m.below-md {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__group {
+    padding: v.$space-lg;
+    border: 1px solid rgba(v.$color-gold, 0.12);
+    border-left: 3px solid v.$color-gold;
+    border-radius: 1rem;
+    transition: border-color v.$t-base;
+
+    &:hover {
+      border-color: rgba(v.$color-gold, 0.32);
+      border-left-color: v.$color-gold;
+    }
+  }
+
+  &__group-title {
+    font-family: v.$font-serif;
+    font-size: 1.45rem;
+    font-weight: v.$fw-bold;
+    color: v.$color-ivory;
+    margin-bottom: v.$space-md;
+  }
+
+  &__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  &__item {
+    position: relative;
+    padding-left: 1.6rem;
+    font-size: 0.85rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.75;
+
+    // Casilla vacía dibujada con un borde: es un checklist para tildar a mano.
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.35rem;
+      width: 0.72rem;
+      height: 0.72rem;
+      border: 1px solid rgba(v.$color-gold, 0.55);
+      border-radius: 0.15rem;
+    }
+  }
+
+  &__outro {
+    margin-top: v.$space-2xl;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: v.$fw-light;
+    color: v.$color-ivory-dim;
+    line-height: 1.75;
+
+    a {
+      color: v.$color-gold;
+      @include m.hover-underline;
+    }
+  }
+}
 .lp-close {
   position: relative;
   z-index: v.$z-content;
