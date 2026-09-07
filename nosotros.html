@@ -29,9 +29,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap">
+  <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet">
+    media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,700;1,700&family=DM+Sans:wght@300;400;500&display=swap">
+  </noscript>
   <link rel="stylesheet" href="css/styles.css">
 
   <script type="application/ld+json">
@@ -381,8 +387,8 @@
           </svg>
         </div>
         <h3 class="philosophy__item-title">Implementación del Sistema</h3>
-        <p class="philosophy__item-desc">Con esa estructura, activamos el Sistema de Adquisición: sitio web, redes
-          sociales, anuncios bien estructurados para captar leads calificados y empezar a nutrirlos.</p>
+        <p class="philosophy__item-desc">implementamos la Infraestructura de Autoridad, ejecutamos la Captación
+          Calificada y automatizamos los flujos de Maduración y Seguimiento.</p>
       </article>
       <article class="philosophy__item">
         <div class="philosophy__icon" aria-hidden="true">
@@ -428,16 +434,19 @@
         </div>
         <div class="team__info">
           <p class="team__role">Los Co-founders de Atenea</p>
-          <p class="team__bio">Somos Caro Guerrero y Pablo Martín y hace algunos años éramos freelancers y ayudábamos a
-            PyMes, profesionales independientes y marcas a destacar su presencia digital y convertir visitas en
-            clientes.</p>
-          <p class="team__bio">Caro, formada en Marketing Digital, empezó como freelancer ayudando a pequeñas marcas a
-            destacar su presencia creando
-            estrategias de contenido potentes en redes sociales como Community Manager y Publicista Digital.</p>
-          <p class="team__bio">Pablo, formado en Marketing Digital y Programación, también empezó como freelancer
-            ayudando a Pymes y profesionales independientes a destacar su presencia construyendo páginas web de alta
+          <p class="team__bio">
+            Detrás de Atenea estamos Caro Guerrero y Pablo Martín. Unimos dos disciplinas que en el mercado suelen
+            trabajar desconectadas: la estrategia de contenidos y pauta publicitaria con la arquitectura web de alta
             conversión.</p>
-          <p class="team__bio">Así empezamos a trabajar juntos haciendo marketing para real estate.</p>
+          <p class="team__bio">Caro: Especialista en Marketing Digital y Publicidad Online. Se enfoca en diseñar
+            estrategias de contenido y campañas de tráfico pago que posicionan la marca y capturan la atención del
+            comprador correcto.</p>
+          <p class="team__bio">Pablo: Formado en Marketing Digital y Desarrollo Web. Especializado en crear la
+            infraestructura digital, landing pages de alta conversión y embudos técnicos que filtran el tráfico y
+            automatizan la captación.</p>
+          <p class="team__bio">Al ver cómo las desarrolladoras perdían meses dependiendo de portales saturados o
+            agencias que solo posteaban en redes, decidimos integrar nuestras áreas para crear un sistema predecible y
+            medible para el Real Estate.</p>
         </div>
       </article>
     </div>
@@ -475,7 +484,7 @@
     <p class="footer__copy">© <span class="js-year">2026</span> Atenea Agency · Todos los derechos reservados</p>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.min.js" defer></script>
 </body>
 
 </html>

@@ -486,7 +486,13 @@ en local, `/api/contact` solo responde con `vercel dev`.**
    ```
    sass scss/main.scss css/styles.css --style=compressed --no-source-map
    ```
-   `css/styles.css` tiene que quedar commiteado siempre actualizado.
+   `css/styles.css` tiene que quedar commiteado siempre actualizado (sin `.map`).
+
+   Si se edita `js/main.js`, regenerar también el bundle minificado que cargan las páginas
+   (`js/main.min.js`, referenciado con `defer`):
+   ```
+   npx terser js/main.js -c -m -o js/main.min.js
+   ```
 2. Reemplazar los placeholders (WhatsApp, email — ver sección de abajo) antes de publicar.
 3. Cargar `RESEND_API_KEY` en las variables de entorno del proyecto y verificar el dominio en Resend (ver
    "Envío de mails" más arriba). Sin esto los formularios muestran el mensaje de error.
