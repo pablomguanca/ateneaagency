@@ -5,17 +5,21 @@
   &__row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: v.$space-lg;
+    gap: v.$space-md;
 
     @include m.below-sm {
       grid-template-columns: 1fr;
+      gap: 1rem;
     }
   }
 
   &__group {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.4rem;
+    // Sin esto el grupo hereda el min-width intrínseco del campo que contiene
+    // y no deja que la columna se achique en mobile.
+    min-width: 0;
   }
 
   &__label {
@@ -32,13 +36,17 @@
   }
 
   &__input {
+    // El ancho mínimo automático de los controles nativos (sobre todo el del
+    // select, que se estira hasta la opción más larga) desbordaba el hero en
+    // pantallas chicas. Los dejamos achicarse hasta el ancho de la columna.
+    min-width: 0;
     font-family: v.$font-sans;
     font-size: 0.92rem;
     color: v.$color-ivory;
     background: v.$color-dark-2;
     border: 1px solid rgba(v.$color-gold, 0.2);
     border-radius: 0.5rem;
-    padding: 0.9rem 1.1rem;
+    padding: 0.72rem 1rem;
     transition: border-color v.$t-fast;
 
     &::placeholder {
@@ -62,7 +70,7 @@
 
   &__textarea {
     resize: vertical;
-    min-height: 140px;
+    min-height: 110px;
   }
 
   &__submit {
@@ -74,11 +82,11 @@
   &__check {
     display: flex;
     align-items: flex-start;
-    gap: 0.7rem;
+    gap: 0.6rem;
     position: relative;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: v.$fw-light;
-    line-height: 1.6;
+    line-height: 1.5;
     color: v.$color-ivory-dim;
 
     input[type='checkbox'] {
@@ -132,10 +140,19 @@
     outline-offset: 2px;
   }
 
+  // Mientras no hay mensaje no reserva alto. Se colapsa con height en vez de
+  // display:none para que siga en el árbol de accesibilidad y el lector de
+  // pantalla anuncie el texto cuando el envío lo escribe.
   &__status {
     font-size: 0.85rem;
     color: v.$color-gold;
     min-height: 1.2em;
+
+    &:empty {
+      height: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
 
     &.is-error {
       color: v.$color-error;
@@ -159,18 +176,23 @@
 }
 
 .form-panel {
+  // El panel siempre es item de un grid o flex al lado del texto. Sin esto
+  // hereda el min-content de sus campos (el <select> es tan ancho como su
+  // opción más larga) y estira la columna más allá del viewport en mobile.
+  min-width: 0;
   position: relative;
   background: v.$color-dark-2;
   border: 1px solid rgba(v.$color-gold, 0.2);
   border-radius: 1.25rem;
-  padding: v.$space-xl;
+  padding: v.$space-lg;
   display: flex;
   flex-direction: column;
-  gap: v.$space-md;
+  gap: 1.15rem;
   box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
 
   @include m.below-sm {
-    padding: v.$space-lg;
+    padding: 1.4rem;
+    gap: 1rem;
   }
 
   .form__input {

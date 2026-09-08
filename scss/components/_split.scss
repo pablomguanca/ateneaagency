@@ -61,6 +61,18 @@
     object-fit: cover;
   }
 
+  &__img--parallax {
+    @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+      height: calc(100% + 36px);
+      margin-top: -18px;
+      backface-visibility: hidden;
+
+      &.is-parallax-active {
+        will-change: transform;
+      }
+    }
+  }
+
   &__label {
     @include m.eyebrow;
     margin-bottom: v.$space-md;

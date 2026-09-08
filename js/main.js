@@ -115,6 +115,79 @@ if (reducedMotion.matches) {
   });
 }
 
+const parallaxImages = document.querySelectorAll('.split__img--parallax');
+const parallaxQuery = window.matchMedia('(min-width: 768px)');
+const PARALLAX_SHIFT = 15;
+
+if (parallaxImages.length) {
+  const visibleImages = new Set();
+  let parallaxFrame = null;
+  let parallaxObserver = null;
+
+  const renderParallax = () => {
+    parallaxFrame = null;
+    const viewportH = window.innerHeight;
+
+    visibleImages.forEach(img => {
+      const rect = img.getBoundingClientRect();
+      const distance = rect.top + rect.height / 2 - viewportH / 2;
+      const range = (viewportH + rect.height) / 2;
+      const progress = Math.max(-1, Math.min(1, distance / range));
+      img.style.transform = `translate3d(0, ${(progress * PARALLAX_SHIFT).toFixed(2)}px, 0)`;
+    });
+  };
+
+  const requestParallax = () => {
+    if (parallaxFrame === null) parallaxFrame = requestAnimationFrame(renderParallax);
+  };
+
+  const enableParallax = () => {
+    if (parallaxObserver) return;
+
+    parallaxObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle('is-parallax-active', entry.isIntersecting);
+        if (entry.isIntersecting) visibleImages.add(entry.target);
+        else visibleImages.delete(entry.target);
+      });
+      if (visibleImages.size) requestParallax();
+    }, { rootMargin: '15% 0px' });
+
+    parallaxImages.forEach(img => parallaxObserver.observe(img));
+    window.addEventListener('scroll', requestParallax, { passive: true });
+    window.addEventListener('resize', requestParallax, { passive: true });
+  };
+
+  const disableParallax = () => {
+    if (!parallaxObserver) return;
+
+    parallaxObserver.disconnect();
+    parallaxObserver = null;
+    window.removeEventListener('scroll', requestParallax);
+    window.removeEventListener('resize', requestParallax);
+
+    if (parallaxFrame !== null) {
+      cancelAnimationFrame(parallaxFrame);
+      parallaxFrame = null;
+    }
+
+    visibleImages.clear();
+    parallaxImages.forEach(img => {
+      img.classList.remove('is-parallax-active');
+      img.style.transform = '';
+    });
+  };
+
+  const syncParallax = () => {
+    if (parallaxQuery.matches && !reducedMotion.matches) enableParallax();
+    else disableParallax();
+  };
+
+  syncParallax();
+  parallaxQuery.addEventListener('change', syncParallax);
+  reducedMotion.addEventListener('change', syncParallax);
+}
+
 const cards = document.querySelectorAll('.strip__item');
 const stickyTop = 250;
 const buriedClasses = ['is-buried-1', 'is-buried-2', 'is-buried-3', 'is-buried-4', 'is-buried-5'];

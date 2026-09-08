@@ -63,7 +63,7 @@
   position: relative;
   z-index: v.$z-content;
   background: v.$color-gold;
-  padding: 5rem 8vw;
+  padding: 4rem 8vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -88,7 +88,8 @@
 
   @include m.below-sm {
     flex-direction: column;
-    padding: v.$space-4xl v.$side-pad;
+    padding: v.$space-3xl v.$side-pad;
+    gap: v.$space-xl;
   }
 
   &__left {
@@ -150,7 +151,7 @@
     }
 
     .form__textarea {
-      min-height: 130px;
+      min-height: 84px;
     }
   }
 

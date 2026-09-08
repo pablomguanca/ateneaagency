@@ -41,16 +41,16 @@
   z-index: v.$z-content;
   max-width: v.$max-width;
   margin: 0 auto;
-  padding: v.$space-3xl v.$side-pad v.$space-5xl;
+  padding: v.$space-2xl v.$side-pad v.$space-4xl;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: v.$space-3xl;
+  gap: v.$space-2xl;
   align-items: center;
 
   @include m.below-md {
     grid-template-columns: 1fr;
-    padding: v.$space-xl v.$side-pad v.$space-4xl;
-    gap: v.$space-2xl;
+    padding: v.$space-lg v.$side-pad v.$space-3xl;
+    gap: v.$space-xl;
   }
 
   &__kicker {
@@ -70,6 +70,14 @@
       font-style: italic;
       color: v.$color-gold;
     }
+
+    // Los saltos manuales están calculados para el ancho de escritorio: en
+    // mobile dejan palabras sueltas colgando de su propia línea.
+    @include m.below-md {
+      br {
+        display: none;
+      }
+    }
   }
 
   &__lead {
@@ -78,44 +86,84 @@
     color: v.$color-ivory-dim;
     line-height: 1.85;
     max-width: 48ch;
-    margin-bottom: v.$space-xl;
+    margin-bottom: v.$space-lg;
   }
 
+  // Los tres bullets del hero comparten pantalla con el panel del formulario:
+  // van agrupados en un solo bloque con hairlines internas para que se lean
+  // como una unidad y no como texto suelto colgando del título.
   &__points {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    border: 1px solid rgba(v.$color-gold, 0.14);
+    border-radius: 1rem;
+    background: rgba(v.$color-gold, 0.03);
+    overflow: hidden;
 
     li {
       display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-size: 0.88rem;
-      font-weight: v.$fw-light;
-      color: v.$color-ivory;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 0.95rem 1.15rem;
+
+      & + li {
+        border-top: 1px solid rgba(v.$color-gold, 0.12);
+      }
     }
 
     svg {
       flex-shrink: 0;
-      width: 18px;
-      height: 18px;
+      width: 14px;
+      height: 14px;
+      // Alinea el check con la mayúscula del título, no con la caja de la línea.
+      margin-top: 0.3rem;
       color: v.$color-gold;
+    }
+  }
+
+  &__point {
+    display: block;
+    font-size: 0.85rem;
+    line-height: 1.6;
+
+    strong {
+      display: block;
+      font-weight: v.$fw-medium;
+      letter-spacing: 0.01em;
+      color: v.$color-ivory;
+    }
+
+    span {
+      display: block;
+      font-weight: v.$fw-light;
+      color: v.$color-ivory-dim;
+      text-wrap: pretty;
     }
   }
 }
 
 .lp-form {
+  // Es el panel con más campos del sitio y comparte pantalla con el hero, así
+  // que va un escalón más ajustado que el resto de los .form-panel.
+  gap: 1rem;
+
   &__title {
     font-family: v.$font-serif;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: v.$fw-bold;
     line-height: 1.2;
   }
 
   &__note {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: v.$color-ivory-dim;
-    line-height: 1.6;
+    line-height: 1.5;
+  }
+
+  // El panel comparte el alto del hero: el textarea es el único campo que
+  // puede crecer, así que arranca corto y el usuario lo estira si necesita.
+  .form__textarea {
+    min-height: 78px;
   }
 }
 

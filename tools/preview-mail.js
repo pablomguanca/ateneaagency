@@ -1,5 +1,6 @@
 /**
- * Previsualiza los mails que manda api/contact.js, sin enviar nada.
+ * Previsualiza los mails que mandan api/contact.js y api/save-lead.js, sin
+ * enviar nada.
  *
  *   node tools/preview-mail.js
  *   node tools/preview-mail.js "María Fernández"
@@ -17,6 +18,7 @@ const path = require('path');
 const { execFile } = require('child_process');
 
 const handler = require('../api/contact.js');
+const gateHandler = require('../api/save-lead.js');
 
 // Valores de mentira: el stub intercepta antes de que salgan a la red.
 process.env.RESEND_API_KEY = 'preview';
@@ -94,6 +96,54 @@ async function generar(etiqueta, suscripcion, archivo) {
   return destino;
 }
 
+/**
+ * Los dos mails del gate de captura: el checklist para quien dejó su email y
+ * el aviso interno. Salen del mismo handler que corre en producción, así que
+ * lo que se ve acá es exactamente lo que se manda.
+ */
+async function generarGate() {
+  capturado = [];
+
+  const res = fakeRes();
+  await gateHandler(
+    {
+      method: 'POST',
+      headers: { 'x-forwarded-for': `203.0.113.${Math.floor(Math.random() * 250) + 1}` },
+      body: { email: DESTINO, source: 'diagnostico-checklist' }
+    },
+    res
+  );
+
+  if (res.statusCode !== 200) {
+    console.error(`  ERROR: save-lead respondió ${res.statusCode}`, res.payload);
+    return [];
+  }
+
+  const mails = [
+    { etiqueta: 'CHECKLIST (el que recibe quien deja su email)', archivo: 'mail-checklist.html', destino: DESTINO },
+    { etiqueta: 'AVISO DEL GATE (el que te llega a vos)', archivo: 'mail-gate-interno.html', destino: process.env.CONTACT_TO }
+  ];
+
+  const generados = [];
+
+  for (const { etiqueta, archivo, destino } of mails) {
+    const mail = capturado.find(c => c.url.includes('resend') && c.body.to[0] === destino);
+    if (!mail) continue;
+
+    const ruta = path.join(SALIDA, archivo);
+    fs.writeFileSync(ruta, mail.body.html, 'utf8');
+
+    console.log(`
+${etiqueta}`);
+    console.log(`  asunto: ${mail.body.subject}`);
+    console.log(`  archivo: ${path.relative(process.cwd(), ruta)}`);
+
+    generados.push(ruta);
+  }
+
+  return generados;
+}
+
 function abrir(archivo) {
   const url = 'file://' + archivo.replace(/\\/g, '/');
 
@@ -121,6 +171,8 @@ function abrir(archivo) {
     console.log(`  archivo: ${path.relative(process.cwd(), destino)}`);
   }
 
+  const delGate = await generarGate();
+
   console.log(
     '\nOJO: el navegador sí carga Cormorant Garamond, así que esta vista es el\n' +
     'mejor caso (Apple Mail, iOS Mail). Gmail, Outlook y Yahoo no soportan\n' +
@@ -134,5 +186,5 @@ function abrir(archivo) {
   }
 
   console.log('\nAbriendo en el navegador...');
-  [conLista, sinLista].filter(Boolean).forEach(abrir);
+  [conLista, sinLista, ...delGate].filter(Boolean).forEach(abrir);
 })();

@@ -17,6 +17,12 @@
     gap: v.$space-2xl;
   }
 
+  // Mismo caso que .form-panel: sin esto la columna del formulario se estira
+  // hasta el min-content del <select> y desborda el viewport en mobile.
+  > * {
+    min-width: 0;
+  }
+
   &__label {
     @include m.eyebrow;
     margin-bottom: v.$space-md;

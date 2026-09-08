@@ -131,7 +131,18 @@ atenea-agency/
 │       ├── _contacto.scss
 │       └── _landing.scss
 ├── js/
-│   └── main.js
+│   ├── main.js           ← fuente
+│   └── main.min.js       ← bundle que cargan las páginas, regenerar con terser
+├── api/                  ← funciones serverless de Vercel (sin dependencias)
+│   ├── contact.js        ← formularios de contacto: aviso + Brevo + bienvenida
+│   ├── save-lead.js      ← gate de captura del checklist en diagnostico.html
+│   └── _lib/
+│       ├── checklist.js    ← los 16 chequeos: única fuente de verdad
+│       ├── gate-mails.js   ← plantillas del gate
+│       └── mail-layout.js  ← cascarón de marca de los mails
+├── tools/                ← utilidades de desarrollo (fuera del deploy)
+│   ├── preview-mail.js   ← genera los mails en tools/preview/ sin enviarlos
+│   └── dev-server.js     ← sitio + API en localhost:4322
 └── assets/
     └── img/
         ├── placeholder.svg
@@ -206,6 +217,8 @@ atenea-agency/
 | `.js-contact-form` | Marca un formulario para que lo maneje main.js |
 | `.js-form-status`  | Párrafo donde se escribe la respuesta del envío |
 | `.was-validated`   | Se agrega al intentar enviar: recién ahí se marcan en rojo los campos inválidos |
+| `.js-gate-status`  | Párrafo de respuesta del gate de captura en `diagnostico.html` |
+| `.lp-gate__*`      | Bloques del gate. `__content` lo llena el JS con lo que devuelve `/api/save-lead` |
 
 ---
 
@@ -220,6 +233,10 @@ atenea-agency/
 | `mob`       | Mobile menu                 |
 | `layer1`    | Capa parallax lenta         |
 | `layer2`    | Capa parallax rápida        |
+| `gate-form`  | Formulario del gate de captura |
+| `gateEmail`  | Campo de email del gate      |
+| `gate-veil`  | Velo con las barras difuminadas |
+| `gate-content` | Donde el JS inyecta el checklist |
 
 ---
 
@@ -402,6 +419,99 @@ pero la plantilla degrada de manera aceptable.
 **Baja de la lista.** Las campañas que salgan por Brevo llevan el link de baja automático. El mail de
 bienvenida sale por Resend y ofrece la baja por respuesta ("respondé este mail"). Alcanza mientras el volumen
 sea bajo; si crece, conviene mandar también la bienvenida desde Brevo para que gestione la baja sola.
+
+### Gate de captura de email (`api/save-lead.js`)
+
+En `diagnostico.html`, después de "El punto de partida", hay una sección que pide **solo el email** y a cambio
+despliega el **checklist de auto-diagnóstico**: 16 chequeos agrupados en las mismas cuatro áreas que revisamos
+(redes, web, campañas, comunicación). Es el mismo circuito que corre en Arcadia, adaptado a este sitio.
+
+Es un endpoint aparte de `api/contact.js` a propósito: son dos intenciones distintas. Quien pide el diagnóstico
+quiere que lo llamemos; quien deja el mail acá todavía está mirando. Mezclarlos ensuciaría el aviso interno, que
+es lo que la agencia lee para saber a quién responder.
+
+**El flujo, en orden:**
+
+1. El front valida el email y postea a `/api/save-lead`.
+2. El handler da de alta el contacto en la lista de Brevo (atributo `ORIGEN`). **Va primero** porque es el paso
+   que captura el dato que de otro modo se pierde.
+3. Manda por Resend el mail con el checklist a quien lo dejó, y el aviso interno a la agencia. Los dos en
+   paralelo, ninguno puede tumbar al otro.
+4. Responde `200` con el checklist en el cuerpo, y el JS lo inyecta en la página.
+
+**Rechazo vs. avería: la regla que ordena todo el circuito.**
+
+| | Qué pasó | Qué responde | Qué ve el visitante |
+|---|---|---|---|
+| **Rechazo** | Email inválido, o demasiados intentos desde la misma IP | `400` / `429` | Un error para corregir. **No** se desbloquea. |
+| **Avería** | Brevo caído, API key mal cargada, Resend sin responder | `200` con `saved: false` | El checklist, igual. |
+
+El criterio: si el problema es de quien envía, se le pide que corrija. Si el problema es **nuestro**, entra
+igual — dejarlo afuera por una falla propia nos hace perder el lead entero además del mail.
+
+**Rescate de leads perdidos.** En toda avería el mail se loguea con el prefijo `[lead-perdido]`, con el origen
+y el motivo. Buscando ese prefijo en los logs de Vercel (Deployments → Functions → `save-lead`) se recuperan a
+mano los que no llegaron a Brevo.
+
+**El contenido no está en el HTML.** El checklist vive en `api/_lib/checklist.js` y viaja en la respuesta del
+endpoint. Si estuviera escrito en `diagnostico.html` se leería desde el código fuente sin dejar nada y el gate
+sería decorativo. De esa única fuente salen las dos copias —la de la página y la del mail—, así que no pueden
+divergir.
+
+**El desbloqueo se recuerda solo si el alta funcionó.** El JS guarda el checklist en `localStorage`
+(`atenea_checklist`) **solo** cuando Brevo confirmó el alta. Si hubo avería no se cachea: la próxima visita
+vuelve a pedir el mail, que es otra oportunidad de capturarlo, y esta vez la persona ya lo vio igual.
+
+**Consentimiento.** Acá no hay checkbox: el intercambio es explícito (el mail a cambio del checklist) y la nota
+debajo del campo dice que se suma a la lista de novedades y que la baja se pide respondiendo cualquier mail.
+Es distinto de los formularios de contacto, donde el opt-in **sí** es un checkbox que no se toca. Si más
+adelante se prefiere pedir tilde explícita también acá, hay que agregar el checkbox al form y condicionar el
+`upsertContact`.
+
+**Variables de entorno.** Las mismas que ya usa `api/contact.js`, sin agregar ninguna:
+`RESEND_API_KEY`, `CONTACT_FROM`, `CONTACT_TO` (destino del aviso, acepta varios separados por coma),
+`BREVO_API_KEY` y `BREVO_LIST_ID`. Si falta cualquiera, el gate sigue funcionando y lo deja logueado.
+
+**Atributo en Brevo.** El alta manda `ORIGEN`. Si ese atributo no existe en la cuenta, Brevo rechaza con `400`
+y el handler **reintenta con el email solo**: se pierde el atributo, no el lead. Conviene crearlo igual en
+Brevo → Contactos → Configuración → Atributos.
+
+**Archivos:**
+
+```
+api/
+├── save-lead.js          ← el endpoint del gate
+├── contact.js            ← formularios de contacto (independiente)
+└── _lib/
+    ├── checklist.js      ← los 16 chequeos: única fuente de verdad
+    ├── gate-mails.js     ← las dos plantillas del gate
+    └── mail-layout.js    ← cascarón de marca compartido
+```
+
+`api/contact.js` todavía tiene su propia copia del cascarón escrita inline. Migrarlo a `_lib/mail-layout.js`
+es un paso pendiente y aislado; no hacía falta para el gate.
+
+**Ver los mails sin mandarlos:**
+
+```
+node tools/preview-mail.js
+```
+
+Genera en `tools/preview/` los cinco mails —los tres de contacto más `mail-checklist.html` y
+`mail-gate-interno.html`— y los abre en el navegador. Corre los handlers de verdad con `fetch` interceptado, así
+que lo que se ve es exactamente lo que se manda.
+
+**Probar el circuito completo en local:**
+
+```
+node tools/dev-server.js
+```
+
+Levanta el sitio **y** las funciones de `api/` en `http://localhost:4322`, que es algo que `serve` no hace. Sin
+`RESEND_API_KEY` ni `BREVO_API_KEY` no manda ni guarda nada: loguea y sigue, que es justo el camino de avería
+que conviene poder ver. Para probar con envío real, exportá las claves antes de arrancar.
+
+---
 
 ## Pendientes (buscar `TODO` en el repo)
 
