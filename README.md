@@ -16,9 +16,9 @@ posicionamiento original y quedó atrás.
 2. **El CTA nunca es una lista de precios.** En el sitio principal (`index`, `servicios`, `nosotros`,
    `contacto`) el llamado a la acción es **"Coordinar la llamada"**, alineado con el "Agendar llamada" del hero:
    una sola conversión, una sola promesa. El **diagnóstico es el beneficio** (lo que el cliente se lleva de esa
-   llamada), y por eso vive en los títulos y el copy de apoyo, no en los botones. La landing `diagnostico.html`
-   es la excepción deliberada: mantiene "Solicitar diagnóstico" porque tiene que dar continuidad al anuncio del
-   que llega el tráfico.
+   llamada), y por eso vive en los títulos y el copy de apoyo, no en los botones. Las dos landings de
+   diagnóstico son la excepción deliberada: mantienen "Solicitar diagnóstico" porque tienen que dar continuidad
+   al anuncio del que llega el tráfico.
    **Terminología:** "diagnóstico" y "auditoría" no son dos ofertas distintas — la auditoría es el trabajo
    (revisar qué hay hoy) y el diagnóstico es el resultado que recibe el cliente. En todo el sitio, la **oferta
    se llama siempre "diagnóstico"**; "auditamos" aparece solo como el paso 2 del método. No mezclarlos como si
@@ -94,7 +94,8 @@ atenea-agency/
 ├── nosotros.html
 ├── contacto.html
 ├── 404.html
-├── diagnostico.html        ← landing de campaña (noindex, sin nav)
+├── diagnostico-inmobiliarias.html  ← landing de campaña (noindex, sin nav)
+├── diagnostico-desarrollos.html    ← landing de campaña (noindex, sin nav)
 ├── robots.txt
 ├── sitemap.xml
 ├── vercel.json             ← config de deploy (headers, redirect www)
@@ -249,12 +250,16 @@ atenea-agency/
 - `nosotros.html` — por qué Atenea, por qué la especialización en real estate, 4 principios, equipo (Carolina y Pablo)
 - `contacto.html` — formulario accesible + datos de contacto + WhatsApp
 - `404.html` — página de error
-- `diagnostico.html` — **landing de campaña** (ver abajo)
+- `diagnostico-inmobiliarias.html` y `diagnostico-desarrollos.html` — **landings de campaña** (ver abajo)
 
 ### Landings de campaña
 
-`diagnostico.html` es una landing pensada para recibir tráfico **pago** (Meta / Google Ads) cuando la agencia
-sale a buscar clientes. Se diferencia del resto del sitio a propósito:
+`diagnostico-inmobiliarias.html` y `diagnostico-desarrollos.html` son dos landings pensadas para recibir
+tráfico **pago** (Meta / Google Ads) cuando la agencia sale a buscar clientes. Están separadas porque le hablan
+a dos audiencias con problemas distintos: la inmobiliaria que necesita captar exclusivas y el desarrollador que
+vende en pozo. Cada una tiene su propio `data-origen`, así en Brevo se ve de cuál vino cada contacto.
+
+Se diferencian del resto del sitio a propósito:
 
 - **Sin navbar ni menú**: un solo objetivo, que dejen los datos. No hay links que fuguen el tráfico salvo el
   ancla al formulario.
@@ -269,12 +274,15 @@ marca de ese desarrollo—, no esta. Esta es para captar clientes de Atenea.
 
 ### Formularios
 
-Hay **tres**, y cumplen funciones distintas a propósito (no son duplicados):
+Hay **cuatro**, y cumplen funciones distintas a propósito (no son duplicados):
 
 - **Corto**, en el bloque final de `index.html`: nombre, teléfono, email y mensaje opcional. Captura de baja
   fricción para el tráfico que cae en la home, sobre todo el que viene de pauta.
 - **Completo**, en `contacto.html`: suma tipo de proyecto y servicio de interés, para quien quiere dar contexto.
-- **Landing**, en `diagnostico.html`: nombre, un campo combinado email/teléfono y tipo de proyecto.
+- **Landings**, en `diagnostico-inmobiliarias.html` y `diagnostico-desarrollos.html`: nombre, email
+  corporativo (obligatorio), teléfono (opcional) y un select propio de cada audiencia — foco de cartera en
+  la de inmobiliarias, tipo de desarrollo en la de pozo. El email es un campo aparte y obligatorio a
+  propósito: es lo que garantiza la captura en Brevo y el mail de bienvenida.
 
 Los maneja **el mismo código** en `js/main.js`: la lógica recorre todos los `.js-contact-form`. Para sumar otro
 formulario alcanza con darle esa clase, un `.js-form-status` donde escribir la respuesta, un `<button
@@ -344,22 +352,24 @@ al interesado) y Brevo para la lista y las campañas. Separarlas protege la entr
 quejas de spam, no arrastra la reputación de los mails que no pueden fallar. Además Resend Broadcasts manda
 campañas sueltas pero **no automatiza secuencias**, y la nutrición de leads es justamente eso.
 
-**Consentimiento: el checkbox no se toca.** Los tres formularios tienen un opt-in (`name="suscripcion"`)
+**Consentimiento: el checkbox no se toca.** Los cuatro formularios tienen un opt-in (`name="suscripcion"`)
 **desmarcado por defecto**, y solo se suscribe a quien lo marca. Quien no lo marca igual entra como lead y
 recibe la confirmación. Esto no es opcional:
 
 - La Ley 25.326 exige consentimiento informado. Aceptar que te llamen no es aceptar recibir campañas.
 - Suscribir a gente que no lo pidió genera marcas de spam, y eso quema la reputación del mismo dominio con el
   que salen las notificaciones internas.
-- La leyenda de `diagnostico.html` promete explícitamente que los datos se usan para responder y, solo si se
+- La leyenda de las dos landings promete explícitamente que los datos se usan para responder y, solo si se
   marca la casilla, para novedades. **Si algún día se suscribe a todos automáticamente, hay que reescribir esa
   frase primero.**
 
 **Puesta en marcha en Brevo:**
 
 1. Crear la cuenta y una lista; anotar el **ID numérico** de la lista (aparece en la URL y en el panel).
-2. Crear los atributos de contacto en **Contactos → Configuración → Atributos**, los cuatro de tipo texto:
-   `NOMBRE`, `TELEFONO`, `PROYECTO`, `ORIGEN`. Si falta alguno, Brevo rechaza el alta con un 400 y el detalle
+2. Crear los atributos de contacto en **Contactos → Configuración → Atributos**, los cinco de tipo texto:
+   `NOMBRE`, `TELEFONO`, `PROYECTO`, `SERVICIO`, `ORIGEN`. `TELEFONO` va como **texto, no como número**:
+   los valores llegan con formato `+5491169152671` y el tipo numérico de Brevo rechaza el `+`.
+   `SERVICIO` solo lo completa el formulario de `contacto.html`; en el resto viaja vacío. Si falta alguno, Brevo rechaza el alta con un 400 y el detalle
    queda en los logs de la función.
 3. Generar una API key en **SMTP & API → API Keys**.
 4. Cargar `BREVO_API_KEY` y `BREVO_LIST_ID` en Vercel y redeployar.
@@ -370,8 +380,8 @@ recibe la confirmación. Esto no es opcional:
   actualizan sus atributos en vez de fallar con un 409.
 - El atributo `ORIGEN` guarda de qué formulario vino (`Home`, `Contacto`, `Landing diagnóstico`), lo que después
   permite segmentar campañas por origen del lead.
-- Si el lead marcó el opt-in pero solo dejó un teléfono (caso posible en `diagnostico.html`, que tiene el campo
-  combinado), no hay a qué suscribir: se loguea y sigue.
+- Los cuatro formularios piden el email en un campo propio y obligatorio, así que si marcó el opt-in siempre
+  hay a qué suscribir. El código igual contempla el caso de que falte: se loguea y sigue, sin tumbar el aviso.
 - **El aviso interno nunca depende de esto.** El alta en Brevo y el mail de bienvenida van después de que la
   notificación ya salió, cada uno en su propio `try/catch`. Si Brevo se cae, el lead igual llega.
 - El mail de bienvenida menciona la suscripción **solo si el alta funcionó de verdad**, no si se intentó. Si
@@ -552,7 +562,7 @@ real cuando esté disponible; las dimensiones y el `object-fit: cover` del conte
   referencian por ese `@id` en vez de repetirla, así Google entiende que es **una sola** agencia y no cuatro.
   Cada página usa además el tipo que le corresponde: `WebPage` + `ItemList` en servicios, `AboutPage` con los
   socios en nosotros, `ContactPage` en contacto, y todas llevan `BreadcrumbList`.
-  `diagnostico.html` y `404.html` no llevan marcado: son `noindex`, no tiene sentido marcarlas.
+  Las dos landings de diagnóstico y `404.html` no llevan marcado: son `noindex`, no tiene sentido marcarlas.
   **Regla:** el nicho se declara con `audience` y `serviceType`, **no** repitiendo "para inmobiliarias" dentro
   del nombre de cada servicio. Los nombres del marcado deben coincidir con los que se leen en la página; el
   marcado que se despega del contenido visible Google puede ignorarlo o penalizarlo como spam.

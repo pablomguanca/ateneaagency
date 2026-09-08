@@ -23,11 +23,20 @@
 
   &__title {
     font-family: v.$font-serif;
-    font-size: clamp(2.8rem, 6vw, 4rem);
+    font-size: clamp(2.8rem, 6vw, 5rem);
     font-weight: v.$fw-bold;
     line-height: 1.02;
     letter-spacing: -0.02em;
     margin-bottom: v.$space-lg;
+
+    &--services {
+      font-size: clamp(2.8rem, 6vw, 4.6rem);
+
+      em {
+        font-style: italic;
+        color: v.$color-gold;
+      }
+    }
 
     em {
       font-style: italic;

@@ -113,9 +113,15 @@
                 </div>
 
                 <div class="form__group">
-                    <label class="form__label" for="lpContacto">Email corporativo o teléfono</label>
-                    <input class="form__input" type="text" id="lpContacto" name="contacto" autocomplete="email"
-                        required>
+                    <label class="form__label" for="lpEmail">Email corporativo</label>
+                    <input class="form__input" type="email" id="lpEmail" name="email" autocomplete="email" required>
+                </div>
+
+                <div class="form__group">
+                    <label class="form__label" for="lpTelefono">Teléfono <span class="form__optional">(opcional)</span></label>
+                    <input class="form__input" type="tel" id="lpTelefono" name="telefono" autocomplete="tel" inputmode="tel"
+                        pattern="\+?[0-9]{8,15}" maxlength="16"
+                        title="Ingresá solo números, sin espacios ni guiones. Podés anteponer + si es un número del exterior.">
                 </div>
 
                 <div class="form__group">

@@ -112,6 +112,8 @@ async function subscribeToBrevo(data, origen) {
         NOMBRE: data.nombre,
         TELEFONO: data.telefono || '',
         PROYECTO: data.proyecto || '',
+        // Solo lo pregunta el formulario de contacto; en las landings viaja vacío.
+        SERVICIO: data.servicio || '',
         ORIGEN: origen
       }
     })
