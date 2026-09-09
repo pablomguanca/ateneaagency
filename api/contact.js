@@ -18,10 +18,15 @@
  *   BREVO_API_KEY   (opcional)     API key de Brevo. Sin ella no se suscribe
  *                                  a nadie, pero el formulario sigue andando.
  *   BREVO_LIST_ID   (opcional)     ID numérico de la lista de Brevo.
+ *   TURNSTILE_SECRET_KEY (opcional) Secret de Cloudflare Turnstile. Sin ella
+ *                                  la verificación anti-bot queda apagada y
+ *                                  el formulario funciona como antes.
  *
  * Sin dependencias a propósito: usa el fetch global de Node 18+, así el repo
  * se mantiene estático y sin package.json.
  */
+
+const { verifyHuman } = require('./_lib/turnstile.js');
 
 const RESEND_ENDPOINT = 'https://api.resend.com/emails';
 const BREVO_CONTACTS_ENDPOINT = 'https://api.brevo.com/v3/contacts';
@@ -149,11 +154,48 @@ const FONT_LINK = `<!--[if !mso]><!-->
 </style>
 <![endif]-->`;
 
-function welcomeTemplate(nombre, suscripto) {
-  const parrafos = [
+/**
+ * El texto del mail de bienvenida, según de qué formulario vino la consulta.
+ *
+ * La clave es el `data-origen` del <form> en el HTML. Si cambiás uno allá,
+ * cambialo acá también: si no coincide, cae en COPY_DEFECTO sin avisar.
+ *
+ * Acá se define SOLO lo que cambia: el asunto y los párrafos del cuerpo. El
+ * resto del mail —logo, filete dorado, recuadro de novedades, pie— es igual
+ * para todos y vive en welcomeTemplate.
+ *
+ * Los párrafos son texto plano: se escapan y se maquetan solos. No metas HTML
+ * acá adentro.
+ */
+const COPY_BIENVENIDA = {
+  'Landing Diagnostico Inmobiliarias': {
+    subject: 'Recibimos tu consulta — Atenea Agency',
+    parrafos: [
+      'Recibimos tu consulta y ya la estamos leyendo.',
+      'Te respondemos dentro de las 24 horas hábiles para coordinar una llamada y devolverte un primer análisis de tu proyecto.'
+    ]
+  },
+
+  'Landing Diagnostico Desarrollos': {
+    subject: 'Recibimos tu consulta — Atenea Agency',
+    parrafos: [
+      'Recibimos tu consulta y ya la estamos leyendo.',
+      'Te respondemos dentro de las 24 horas hábiles para coordinar una llamada y devolverte un primer análisis de tu proyecto.'
+    ]
+  }
+};
+
+/** Lo que reciben la home, contacto, y cualquier origen sin entrada propia. */
+const COPY_DEFECTO = {
+  subject: 'Recibimos tu consulta — Atenea Agency',
+  parrafos: [
     'Recibimos tu consulta y ya la estamos leyendo.',
     'Te respondemos dentro de las 24 horas hábiles para coordinar una llamada y devolverte un primer análisis de tu proyecto.'
-  ];
+  ]
+};
+
+function welcomeTemplate(nombre, suscripto, origen) {
+  const { subject, parrafos } = COPY_BIENVENIDA[origen] || COPY_DEFECTO;
 
   const textoPlano = [
     `Hola ${nombre}, gracias por escribirnos.`,
@@ -268,7 +310,7 @@ ${FONT_LINK}
 </body>
 </html>`;
 
-  return { text: textoPlano.join('\n\n'), html };
+  return { subject, text: textoPlano.join('\n\n'), html };
 }
 
 /**
@@ -277,9 +319,9 @@ ${FONT_LINK}
  * correo simultáneo. El reply-to apunta a la agencia, así una respuesta a
  * esta confirmación llega a la bandeja correcta.
  */
-async function sendWelcomeEmail(apiKey, data, suscripto) {
+async function sendWelcomeEmail(apiKey, data, suscripto, origen) {
   const nombre = data.nombre.split(' ')[0];
-  const { text, html } = welcomeTemplate(nombre, suscripto);
+  const { subject, text, html } = welcomeTemplate(nombre, suscripto, origen);
 
   const response = await fetch(RESEND_ENDPOINT, {
     method: 'POST',
@@ -291,7 +333,7 @@ async function sendWelcomeEmail(apiKey, data, suscripto) {
       from: process.env.CONTACT_FROM || DEFAULT_FROM,
       to: [data.email],
       reply_to: process.env.CONTACT_TO || DEFAULT_TO,
-      subject: 'Recibimos tu consulta — Atenea Agency',
+      subject,
       text,
       html
     })
@@ -353,6 +395,23 @@ module.exports = async (req, res) => {
 
   if (invalid.length) {
     return res.status(400).json({ error: 'Faltan datos o son inválidos.', campos: invalid });
+  }
+
+  // Anti-bot. Va después de las validaciones locales porque el token de
+  // Turnstile es de un solo uso: no conviene gastarlo en un envío que igual
+  // iba a rebotar por datos inválidos.
+  const veredicto = await verifyHuman(body.turnstileToken, ip);
+
+  // Rechazo: el problema está del lado de quien envía y se le corta el paso.
+  if (veredicto === 'rejected') {
+    return res.status(403).json({
+      error: 'No pudimos verificar que no seas un bot. Recargá la página y probá de nuevo.'
+    });
+  }
+
+  // Avería: se rompió algo nuestro. El visitante pasa igual, pero queda anotado.
+  if (veredicto === 'unavailable') {
+    console.warn('[contact] Turnstile no disponible, se deja pasar el envío.');
   }
 
   const origen = text(body.origen, 60) || 'sitio';
@@ -421,7 +480,7 @@ module.exports = async (req, res) => {
 
     if (data.email) {
       try {
-        await sendWelcomeEmail(apiKey, data, suscripto);
+        await sendWelcomeEmail(apiKey, data, suscripto, origen);
       } catch (error) {
         console.error('[contact] No se pudo enviar el mail de bienvenida:', error);
       }

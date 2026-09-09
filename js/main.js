@@ -326,6 +326,119 @@ document.querySelectorAll('input[type="tel"]').forEach(input => {
 
 const ERROR_MESSAGE = 'No pudimos enviar tu mensaje. Probá de nuevo en unos minutos o escribinos por WhatsApp.';
 
+const TURNSTILE_SITE_KEY = '0x4AAAAAAEtT_UYPvmY38cXY';
+
+const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+
+const TURNSTILE_ESPERA_MS = 5000;
+
+let turnstileCarga = null;
+
+function cargarTurnstile() {
+  if (turnstileCarga) return turnstileCarga;
+
+  turnstileCarga = new Promise((resolve, reject) => {
+    if (window.turnstile) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = TURNSTILE_SRC;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Turnstile no cargó'));
+    document.head.appendChild(script);
+  });
+
+  return turnstileCarga;
+}
+
+function montarAntibot(form, submitButton) {
+  if (!TURNSTILE_SITE_KEY) return null;
+
+  const caja = document.createElement('div');
+  caja.className = 'form__turnstile';
+  submitButton.insertAdjacentElement('beforebegin', caja);
+
+  let token = '';
+  let widgetId = null;
+
+  const mostrarCaja = () => caja.classList.add('is-visible');
+  const ocultarCaja = () => caja.classList.remove('is-visible');
+
+  const renderizar = async () => {
+    if (widgetId !== null) return;
+
+    await cargarTurnstile();
+
+    // Se vuelve a chequear: dos disparos del precalentado pueden entrar acá
+    // antes de que el primero termine de cargar el script.
+    if (widgetId !== null) return;
+
+    widgetId = window.turnstile.render(caja, {
+      sitekey: TURNSTILE_SITE_KEY,
+      // Solo se muestra si Cloudflare decide que hace falta un desafío. Para la
+      // enorme mayoría el widget nunca aparece.
+      appearance: 'interaction-only',
+      callback: nuevo => { token = nuevo; },
+      'expired-callback': () => { token = ''; },
+      'error-callback': () => { token = ''; },
+      // El contenedor vive fuera del flujo del formulario para no dejar un
+      // hueco cuando está invisible; entra al flujo solo si hay desafío.
+      'before-interactive-callback': mostrarCaja,
+      'after-interactive-callback': ocultarCaja
+    });
+  };
+
+  // Son ~30 KB de JS de Cloudflare: cargarlos al abrir la página castiga el
+  // render de todo el mundo para servir a los pocos que completan el
+  // formulario. Se precargan con el primer contacto con el form, así para
+  // cuando llegue el submit ya está resuelto, y quien pasa de largo no los baja.
+  const precalentar = () => { renderizar().catch(() => {}); };
+  form.addEventListener('focusin', precalentar, { once: true });
+  form.addEventListener('pointerdown', precalentar, { once: true });
+
+  return {
+    async obtenerToken() {
+      try {
+        await renderizar();
+      } catch (error) {
+        // El script no cargó. Se manda sin token y decide el backend.
+        return '';
+      }
+
+      const limite = Date.now() + TURNSTILE_ESPERA_MS;
+
+      // Red de seguridad: si a mitad de la espera todavía no hay token, se
+      // revela la caja igual. Puede haber un desafío esperando que el callback
+      // no alcanzó a anunciar, y un desafío invisible deja a la persona
+      // trabada sin entender por qué.
+      const revelar = setTimeout(mostrarCaja, TURNSTILE_ESPERA_MS / 2);
+
+      while (!token && Date.now() < limite) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
+      clearTimeout(revelar);
+
+      return token;
+    },
+
+    hayDesafioALaVista() {
+      return caja.classList.contains('is-visible');
+    },
+
+    // El token es de un solo uso y vive 5 minutos: después de cada intento,
+    // salga bien o mal, hay que pedir uno nuevo.
+    reiniciar() {
+      token = '';
+      if (widgetId !== null && window.turnstile) window.turnstile.reset(widgetId);
+    }
+  };
+}
+
 document.querySelectorAll('.js-contact-form').forEach(form => {
   const status = form.querySelector('.js-form-status');
   const submitButton = form.querySelector('button[type="submit"]');
@@ -334,6 +447,7 @@ document.querySelectorAll('.js-contact-form').forEach(form => {
   if (!status || !submitLabel) return;
 
   const idleLabel = submitLabel.textContent;
+  const antibot = montarAntibot(form, submitButton);
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -349,9 +463,36 @@ document.querySelectorAll('.js-contact-form').forEach(form => {
     status.textContent = '';
     status.classList.remove('is-error');
 
+    // Se corta antes de enviar por un desafío pendiente. En ese caso el widget
+    // NO se reinicia: reiniciarlo borraría el desafío que la persona está por
+    // resolver, y quedaría en un bucle sin salida.
+    let desafioPendiente = false;
+
     try {
       const payload = Object.fromEntries(new FormData(form).entries());
       payload.origen = form.dataset.origen || 'sitio';
+
+      if (antibot) {
+        // Turnstile deja su propio input oculto dentro del <form>, así que
+        // FormData lo levanta. El token lo mandamos nosotros en un campo
+        // propio, así que ese duplicado no aporta nada.
+        delete payload['cf-turnstile-response'];
+        payload.turnstileToken = await antibot.obtenerToken();
+
+        // Sin token pero con el desafío a la vista: la persona tiene algo
+        // pendiente que resolver. Se le dice acá en vez de mandar un envío que
+        // el backend va a rechazar igual.
+        //
+        // Solo se corta si el desafío está visible. Si no lo está, el envío
+        // sale sin token y decide el backend: puede tener la verificación
+        // apagada, y en ese caso cortar acá sería perder el lead por nada.
+        if (!payload.turnstileToken && antibot.hayDesafioALaVista()) {
+          desafioPendiente = true;
+          status.classList.add('is-error');
+          status.textContent = 'Completá la verificación de seguridad y volvé a enviar.';
+          return;
+        }
+      }
 
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -359,7 +500,14 @@ document.querySelectorAll('.js-contact-form').forEach(form => {
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) {
+        // El backend explica los rechazos con un mensaje propio —un email
+        // inválido, el anti-bot— y ese texto es más útil que el genérico.
+        const data = await response.json().catch(() => ({}));
+        const fallo = new Error(`HTTP ${response.status}`);
+        fallo.mensajeParaElUsuario = data.error;
+        throw fallo;
+      }
 
       status.textContent = 'Gracias, recibimos tu mensaje. Te respondemos dentro de las 24 horas hábiles.';
       form.reset();
@@ -367,8 +515,9 @@ document.querySelectorAll('.js-contact-form').forEach(form => {
     } catch (error) {
       console.error('[contact] No se pudo enviar el formulario:', error);
       status.classList.add('is-error');
-      status.textContent = ERROR_MESSAGE;
+      status.textContent = error.mensajeParaElUsuario || ERROR_MESSAGE;
     } finally {
+      if (antibot && !desafioPendiente) antibot.reiniciar();
       submitButton.disabled = false;
       submitLabel.textContent = idleLabel;
     }

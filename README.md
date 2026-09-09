@@ -138,6 +138,7 @@ atenea-agency/
 │   ├── contact.js        ← formularios de contacto: aviso + Brevo + bienvenida
 │   ├── save-lead.js      ← gate de captura del checklist en diagnostico.html
 │   └── _lib/
+│       ├── turnstile.js    ← verificación anti-bot (Cloudflare)
 │       ├── checklist.js    ← los 16 chequeos: única fuente de verdad
 │       ├── gate-mails.js   ← plantillas del gate
 │       └── mail-layout.js  ← cascarón de marca de los mails
@@ -298,6 +299,74 @@ Solo dígitos, con un `+` inicial opcional para números del exterior. La regla 
 pegue en cualquier `input[type="tel"]` (el `+` sobrevive únicamente en la primera posición). Si hay que aflojar
 el rango de 8–15 dígitos, se toca el `pattern` en `index.html` y `contacto.html`.
 
+### Anti-bot (Cloudflare Turnstile)
+
+Los formularios tienen tres capas, de la más barata a la más cara:
+
+1. **Honeypot** (`name="website"`): un campo fuera de pantalla que los bots simples completan y las personas
+   no. Si viene lleno se responde `200` y no se hace nada — el bot cree que funcionó.
+2. **Rate limit por IP**: 5 envíos cada 10 minutos. Es *best-effort*: Vercel puede levantar varias instancias
+   de la función y cada una cuenta por separado, así que el tope real es más alto.
+3. **Turnstile**: verificación real contra Cloudflare.
+
+**Por qué Turnstile y no reCAPTCHA.** Pesa ~30 KB contra ~350 KB, y en las dos landings se paga por cada
+visita: el JS de más cuesta conversiones. Además no manda datos del visitante a Google, lo que simplifica el
+consentimiento. Es gratis y sin tope de verificaciones.
+
+**Los cuatro veredictos** (`api/_lib/turnstile.js`). La diferencia entre ellos define si al visitante se le
+cierra la puerta:
+
+| Veredicto | Cuándo | Qué pasa |
+|---|---|---|
+| `human` | Cloudflare aprueba | Sigue el envío |
+| `rejected` | Cloudflare rechaza, o el envío no trae token | `403`, y **no** se manda ningún mail ni se da de alta en Brevo |
+| `unavailable` | Cloudflare no responde o falla la red | Se deja pasar y se loguea. La avería es nuestra, no del visitante |
+| `disabled` | Falta `TURNSTILE_SECRET_KEY` | Se deja pasar. La verificación está apagada a propósito |
+
+**Dos claves, dos lugares distintos:**
+
+- La **pública** (site key) va en `TURNSTILE_SITE_KEY`, arriba del bloque de formularios en `js/main.js`. Es
+  pública por diseño, así que va en el código.
+- La **privada** (secret key) va en `TURNSTILE_SECRET_KEY`, en las variables de entorno de Vercel. Nunca en el
+  repo.
+
+**Mientras las dos estén vacías, todo el circuito queda inerte** y los formularios funcionan como si Turnstile
+no existiera: no se inyecta el contenedor, no se baja el script y no viaja ningún token. Se activa cargando
+las dos.
+
+**Puesta en marcha:**
+
+1. En Cloudflare → Turnstile, crear un widget para `ateneaagency.com.ar` (tipo **Managed**).
+2. Pegar la site key en `TURNSTILE_SITE_KEY` (`js/main.js`) y **regenerar el bundle** con terser.
+3. Cargar la secret key en `TURNSTILE_SECRET_KEY` en Vercel, en los tres entornos, y redeployar.
+
+**Detalles de implementación que conviene no romper:**
+
+- **El script se carga en diferido**, con el primer `focusin` o `pointerdown` sobre el formulario. Cargarlo al
+  abrir la página castigaría el render de todo el mundo para servir a los pocos que completan el formulario.
+  Para cuando llega el submit ya está resuelto, y quien pasa de largo no lo baja nunca.
+- **El contenedor del widget vive fuera del flujo** (`position: absolute`) mientras no hay desafío. Un hijo
+  vacío en un formulario flex igual consume un gap, y eso dejaba 16px de hueco muerto arriba del botón. El JS
+  le pone `.is-visible` cuando Cloudflare pide interacción, y ahí vuelve al flujo.
+- **El token es de un solo uso y vive 5 minutos.** Después de cada intento, salga bien o mal, hay que
+  reiniciar el widget. La única excepción es cuando se corta por un desafío pendiente: ahí reiniciarlo
+  borraría el desafío que la persona está por resolver y la dejaría en un bucle sin salida.
+- **La verificación va después de validar los campos**, no antes: el token es de un solo uso y no conviene
+  gastarlo en un envío que igual iba a rebotar por datos inválidos.
+- Si no hay token **y el desafío está a la vista**, el front corta solo y pide completarlo, sin gastar un
+  viaje al servidor. Si el desafío **no** está visible, el envío sale sin token y decide el backend: puede
+  tener la verificación apagada, y cortar ahí sería perder el lead por nada.
+
+**Para probar sin claves propias**, Cloudflare publica claves de test: site key `1x00000000000000000000AA`
+(siempre aprueba) y `3x00000000000000000000FF` (fuerza el desafío interactivo); secret
+`1x0000000000000000000000000000000AA` (aprueba) y `2x0000000000000000000000000000000AA` (rechaza).
+
+`api/save-lead.js` **no** tiene esta verificación: hoy ningún formulario lo llama, pero sigue siendo un
+endpoint público que manda mail. Si se revive el gate, hay que sumarle el mismo chequeo y mandar el token
+desde el front.
+
+---
+
 ### Envío de mails (`api/contact.js`)
 
 Función serverless de Vercel, **sin dependencias**: llama a la API REST de Resend con el `fetch` nativo de Node,
@@ -315,6 +384,7 @@ del Gmail al mail corporativo, se cambia esa variable en Vercel y listo — no h
 | `CONTACT_FROM` | No | Remitente. Por defecto `onboarding@resend.dev`, que **solo entrega al mail dueño de la cuenta de Resend**: sirve para probar, no para producción. |
 | `BREVO_API_KEY` | No | API key de Brevo. Sin ella no se suscribe a nadie, pero el formulario sigue funcionando normalmente. |
 | `BREVO_LIST_ID` | No | ID numérico de la lista de Brevo donde entran los contactos. |
+| `TURNSTILE_SECRET_KEY` | No | Secret de Cloudflare Turnstile. Sin ella la verificación anti-bot queda apagada y el formulario funciona igual. |
 
 **Puesta en marcha:**
 
@@ -389,7 +459,24 @@ recibe la confirmación. Esto no es opcional:
 
 #### La plantilla del mail (`welcomeTemplate` en `api/contact.js`)
 
-**No se edita como HTML de web.** El correo tiene sus propias reglas y hay que respetarlas:
+**El texto se edita en `COPY_BIENVENIDA`, no en el HTML.** Ese mapa está arriba de `welcomeTemplate` y
+define, por cada formulario, solo lo que cambia: el asunto y los párrafos del cuerpo. La clave es el
+`data-origen` del `<form>`:
+
+| Clave en el mapa | Formulario |
+|---|---|
+| `Landing Diagnostico Inmobiliarias` | `diagnostico-inmobiliarias.html` |
+| `Landing Diagnostico Desarrollos` | `diagnostico-desarrollos.html` |
+| *(sin entrada)* → `COPY_DEFECTO` | la home y `contacto.html` |
+
+Si se cambia un `data-origen` en el HTML hay que cambiar la clave acá también: cuando no coincide, cae en
+`COPY_DEFECTO` **sin avisar**. Los párrafos son texto plano —se escapan y se maquetan solos—, así que no hay
+que meterles HTML. Para agregar una variante nueva, se suma una entrada al mapa con esas dos propiedades.
+
+Para revisar el resultado de cada uno sin mandar nada: `node tools/preview-mail.js` genera una vista por
+origen en `tools/preview/mail-origen-*.html`, corriendo el handler de verdad.
+
+**El resto del mail no se edita como HTML de web.** El correo tiene sus propias reglas y hay que respetarlas:
 
 - **Tablas para maquetar**, nada de flexbox ni grid: Outlook renderiza con el motor de Word y no los soporta.
 - **Estilos inline únicamente.** Gmail descarta lo que haya en `<head>`, así que una hoja de estilos o un

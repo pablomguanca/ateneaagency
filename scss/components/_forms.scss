@@ -159,6 +159,34 @@
     }
   }
 
+  // Contenedor del widget de Turnstile. Lo inyecta el JS antes del botón de
+  // envío. Con appearance:interaction-only el widget no se muestra salvo que
+  // Cloudflare pida interacción.
+  //
+  // Mientras no hay desafío vive FUERA del flujo: un hijo vacío en un
+  // formulario flex igual consume un gap, y eso dejaba 16px de hueco muerto
+  // arriba del botón. El JS le agrega .is-visible cuando aparece el desafío.
+  &__turnstile {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+
+    &.is-visible {
+      position: static;
+      opacity: 1;
+      pointer-events: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    iframe {
+      max-width: 100%;
+    }
+  }
+
   // Trampa para bots: fuera de pantalla en vez de display:none, porque
   // muchos scrapers ignoran los campos ocultos y este tiene que parecer
   // completable. Queda fuera del tabulador y del lector de pantalla.

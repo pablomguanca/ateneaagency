@@ -30,6 +30,15 @@ process.env.CONTACT_FROM = process.env.CONTACT_FROM || 'Atenea Agency <web@atene
 const DESTINO = 'interesado@ejemplo.com';
 const SALIDA = path.join(__dirname, 'preview');
 
+// Cada formulario del sitio y el archivo donde cae su vista previa. Las claves
+// son los `data-origen` del HTML, los mismos que usa COPY_BIENVENIDA.
+const ORIGENES = {
+  'Home': 'mail-origen-home.html',
+  'Contacto': 'mail-origen-contacto.html',
+  'Landing Diagnostico Inmobiliarias': 'mail-origen-inmobiliarias.html',
+  'Landing Diagnostico Desarrollos': 'mail-origen-desarrollos.html'
+};
+
 // Se descartan las banderas para que `--no-open` no termine usado como nombre.
 const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
 const nombre = args[0] || 'Pablo Guanca';
@@ -50,7 +59,7 @@ function fakeRes() {
   return r;
 }
 
-async function generar(etiqueta, suscripcion, archivo) {
+async function generar(etiqueta, suscripcion, archivo, origen = 'Home') {
   capturado = [];
 
   const res = fakeRes();
@@ -66,7 +75,7 @@ async function generar(etiqueta, suscripcion, archivo) {
         proyecto: 'desarrollo-pozo',
         mensaje: 'Tengo un desarrollo en pozo y necesito ordenar la captación de consultas.',
         suscripcion,
-        origen: 'Home'
+        origen
       }
     },
     res
@@ -158,6 +167,15 @@ function abrir(archivo) {
   const conLista = await generar('CON suscripción a la lista', 'si', 'mail-con-lista.html');
   const sinLista = await generar('SIN suscripción', undefined, 'mail-sin-lista.html');
 
+  // Una vista por origen: así se revisa el copy de COPY_BIENVENIDA de cada
+  // formulario sin tener que editar este archivo a mano.
+  const porOrigen = [];
+
+  for (const [origen, archivo] of Object.entries(ORIGENES)) {
+    const salida = await generar(`ORIGEN: ${origen}`, 'si', archivo, origen);
+    if (salida) porOrigen.push(salida);
+  }
+
   // También el aviso interno, para revisarlo cuando se toque su plantilla.
   const interno = capturado.find(
     c => c.url.includes('resend') && c.body.to[0] === process.env.CONTACT_TO
@@ -186,5 +204,5 @@ function abrir(archivo) {
   }
 
   console.log('\nAbriendo en el navegador...');
-  [conLista, sinLista, ...delGate].filter(Boolean).forEach(abrir);
+  [conLista, sinLista, ...porOrigen, ...delGate].filter(Boolean).forEach(abrir);
 })();
